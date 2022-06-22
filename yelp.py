@@ -34,3 +34,4 @@ print(total)
 with open("yelpAPIData2.json",mode='w',encoding='utf-8') as f:
     json.dump(overallObj, f, ensure_ascii=False, indent=4)
 print(jsonObj['total'])
+print(a)
