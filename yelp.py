@@ -1,7 +1,7 @@
 import requests
 import json
 
-key="jbVyRyrgR8rFfBUlTBHzdapsZoi1RMIxkWpKbhzSDrxdHQlckHn2qm3UYafILzK75SATVm2nGv6ypJzdwfOKy2TaZ5nRP4RfsQkf41yR-V9QOPoGopzK8feCtEGxYnYx"
+key="your-api-key"
 lat,long=1.35644,103.83297
 url='https://api.yelp.com/v3'
 extension='/businesses/search'
@@ -34,4 +34,3 @@ print(total)
 with open("yelpAPIData2.json",mode='w',encoding='utf-8') as f:
     json.dump(overallObj, f, ensure_ascii=False, indent=4)
 print(jsonObj['total'])
-print(a)
