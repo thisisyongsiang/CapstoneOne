@@ -79,4 +79,3 @@ def showExample():
     #print(filterDataByFieldAndValue(caf,"price","$"))
     [print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",['$','$$$'])]
     [print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
-showExample()
