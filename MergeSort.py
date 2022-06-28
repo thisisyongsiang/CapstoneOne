@@ -35,12 +35,13 @@ def getFirstN(arr,field,k,IsAscending=True):
     if IsAscending:
         mergeSort(arr,0,len(arr)-1,lambda a,b:a[field]<=b[field])
     else:
-        mergeSort(arr,0,len(arr)-1,lambda a,b:a[field]<=b[field])
+        mergeSort(arr,0,len(arr)-1,lambda a,b:a[field]>b[field])
     return arr[0:k]
 
 def example():
     dir="yelpAPIData.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
-    firstN=getFirstN(data,'distance',10,False)
-    [print(c['name'],c['distance']) for c in firstN]
+    firstN=getFirstN(data,'review_count',10,False)
+    [print(c['name'],c['review_count']) for c in firstN]
+example()
