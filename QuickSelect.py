@@ -50,4 +50,8 @@ def example():
     f=open(dir,encoding='utf-8')
     data=json.load(f)
     firstN=getFirstN(data,'review_count',10,False)
+<<<<<<< HEAD
     [print(c['name'],c['review_count']) for c in firstN]
+=======
+    [print(c['name'],c['review_count']) for c in firstN]
+>>>>>>> c768200dd6fa08de6a3ebb153491854006652acc
