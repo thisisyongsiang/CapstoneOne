@@ -51,4 +51,3 @@ def example():
     data=json.load(f)
     firstN=getFirstN(data,'review_count',10,False)
     [print(c['name'],c['review_count']) for c in firstN]
-example()
