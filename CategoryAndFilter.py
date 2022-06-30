@@ -1,8 +1,10 @@
+from codecs import getdecoder
 import json
+import GetDistance
 from re import T
 from typing import Dict, List
 
-def getCategories(data:List[str]):
+def getCategories(data:List[str],origin:List[float]=None ):
     """
     Returns dictionary with key as food category in lowercase
     and value as a list of objects belonging to category
@@ -17,7 +19,11 @@ def getCategories(data:List[str]):
     for d in data:
         if d['is_closed']:
             continue
-
+        if 'price' in d:
+            if type(d['price'])==str:
+                d["price"]=len(d['price'])
+        if origin:
+            d['distance']=GetDistance.GetDistanceFromCoordinates(origin,[d['coordinates']['latitude'],d['coordinates']['longitude']])
         dCat = d['categories']
         for c in dCat:
             food=c["title"].lower()
@@ -27,6 +33,37 @@ def getCategories(data:List[str]):
             else:
                 cat[food].append(d)
     return cat
+
+def simplifyData(data:List[str],origin:List[float]=None ):
+    """
+    Makes the data leaner
+    Adds an additional recommendation_value
+    and calculated distance field
+    only includes fields:
+    id
+    categories
+    coordinates
+    rating
+    name
+    review_count
+    price
+    """ 
+    output=[]
+    for d in data:
+        if d['is_closed']:continue
+        obj={}
+        obj['id']=d['id']
+        obj['categories']=d['categories']
+        obj['coordinates']=d['coordinates']
+        if 'price' in d:
+            obj["price"]=len(d['price'])
+        obj['rating']=d['rating']
+        obj['review_count']=d['review_count']
+        if origin:
+            obj['distance']=GetDistance.GetDistanceFromCoordinates(origin,[d['coordinates']['latitude'],d['coordinates']['longitude']])
+        else:
+            obj['distance']=d['distance']
+        output.append(d)
 
 
 def filterDataByFieldAndValue(data:List[Dict],field:str,value):
@@ -59,23 +96,63 @@ def filterDataByFieldAndValueRange(data:List[Dict],field:str,valueRange):
             continue
         if not field in d:
             continue
-        if type(d[field]) is str and type(valueRange[0]) is str:
-            if len(d[field])>=len(valueRange[0]) and len(d[field])<=len(valueRange[1]):
-                output.append(d)
-            continue
         if d[field]>=valueRange[0] and d[field]<=valueRange[1]:
             output.append(d)
     return output    
 
+def getMultipleFoodCategories(data:List[Dict],categories:List[str]):
+    """
+    Get entries which are part of a desired list of categories
+    """
+    cats=set(categories)
+    output=[]
+    for d in data:
+        chosen=False
+        for c in d['categories']:
+            if c['title'].lower() in cats:
+                chosen=True
+        if chosen:
+            output.append(d)
+    return output
+
+
+def filterDataByFieldsAndValueRanges(data:List[Dict],fields:List[str],valueRanges):
+    """
+    filters data by field and value range
+    valueRange to be in a List of 2 values, 
+    First item being the start of the Range,
+    Second value being the End of the range
+    """
+    output=[]
+    for d in data:
+        if d['is_closed']:
+            continue
+
+        toInclude=True
+        for i,field in enumerate(fields):
+            if not field in d:
+                toInclude=False
+                break
+            field=field.lower()
+            if d[field]<valueRanges[i][0] or d[field]>valueRanges[i][1]:
+                toInclude=False
+        if toInclude:
+            output.append(d)
+    return output 
 
 def showExample():
     dir="yelpAPIData.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
     cat=getCategories(data)
-    # print(cat)
-    caf= cat['cafes']
-    #print(caf)
+    print(cat.keys())
+    caf=cat['cafes']
+    print(caf)
     #print(filterDataByFieldAndValue(caf,"price","$"))
-    [print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",['$','$$$'])]
-    [print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
+    foods = getMultipleFoodCategories(data,categories=['pizza','italian'])
+    [print(f['name'],f['categories']) for f in foods]
+    filtered=filterDataByFieldsAndValueRanges(data,['rating','price'],[[3.0,5.0],[2,3]])
+    [print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
+    #[print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",[1,3])]
+    #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
+showExample()
