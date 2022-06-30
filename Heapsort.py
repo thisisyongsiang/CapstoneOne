@@ -1,106 +1,93 @@
-#Heapsort algo
+class Heap:
 
-from imghdr import tests
-from matplotlib.pyplot import axis
-import pandas as pd
-import heapq
-import time
+    def __init__(self, maxsize):
+        self.maxsize = maxsize
+        self.size = 0
+        self.Heap = [0]*(self.maxsize + 1)
+        self.FRONT = 0
 
-def heapSortByDistance(bizData, topX):
-    ''' takes in Pandas dataframe with distance and id field and sorts via heapsort
-    returns a sorted dataframe'''
+    
+    def parent(self, pos):
+        return (pos-1)//2 if pos != 0 else 0
+    
+    def leftChild(self, pos):
+        return (2*pos)+1
 
-    heap_dict = []
+    def rightChild(self, pos):
+        return (2*pos)+2
+    
+    def isLeaf(self, pos):
+        return (2*pos)+1 > self.size
 
-    for i in range(len(bizData.index)):
-        heap_dict.append((bizData['distance'][i],bizData['id'][i]))
+    def swap(self, fpos, spos):
+        self.Heap[fpos], self.Heap[spos] = self.Heap[spos], self.Heap[fpos]
+        
+    def Heapit(self, pos, comparer):
 
-    heapq.heapify(heap_dict)
+        if not self.isLeaf(pos):
+            if comparer(self.Heap[pos], self.Heap[self.rightChild(pos)]) or comparer(self.Heap[pos], self.Heap[self.leftChild(pos)]):
+
+                if comparer(self.Heap[pos], self.Heap[self.rightChild(pos)]):
+                    self.swap(pos, self.rightChild(pos))
+                    self.Heapit(self.rightChild(pos), comparer)
+                
+                else:
+                    self.swap(pos, self.leftChild(pos))
+                    self.Heapit(self.leftChild(pos),comparer)
+
+    
+    def insert(self, item, comparer):
+        if self.size >= self.maxsize:
+            return
+        self.Heap[self.size] = item
+        curr = self.size
+
+        self.size += 1
+
+        while comparer(self.Heap[self.parent(curr)],self.Heap[curr]):
+            self.swap(curr, self.parent(curr))
+            curr = self.parent(curr)
+    
+    def generateHeap(self, comparer):
+
+        for pos in range(self.size//2, 0, -1):
+            self.Heapit(pos, comparer)
+    
+    def remove(self, comparer):
+        popped = self.Heap[self.FRONT]
+        self.Heap[self.FRONT]= self.Heap[self.size-1]
+        self.size -= 1
+        self.Heapit(self.FRONT, comparer)
+        return popped
+
+    def Print(self):
+        for i in range(1, self.maxsize//2+1, 1):
+            print(" PARENT : "+ str(self.Heap[i])+" LEFT CHILD : "+ 
+                                str(self.Heap[2 * i])+" RIGHT CHILD : "+
+                                str(self.Heap[2 * i + 1]))
+
+
+def getFirstN(arr, field, topN, isAscending=True):
+
+    """
+    Takes in list of dictionaries, field for sorting and boolean value for ascending/descending order of sort and returns top N items in a list of dictionaries
+    """
 
     sortedList = []
 
-    for i in range(topX):
-        sortedList.append(heapq.heappop(heap_dict))
-    
-    sortedDf = pd.DataFrame(sortedList, columns=['distance','id'])
-    outputDf = pd.merge(sortedDf, bizData, on='id', how='left')
-    outputDf = outputDf.drop(['distance_y'], axis=1)
-    outputDf.rename(columns={'distance_x':'distance'}, inplace=True)
-    
-    return outputDf
-
-def heapSortByReview(bizData, topX):
-    ''' takes in Pandas dataframe with rating and id field and sorts via heapsort
-    returns a sorted dataframe'''
-
-    heap_dict = []
-
-    #create list of tuples for sorting via heapsort and heapify it
-    #adds postal code as decimals to make each value unique
-    #sorts for maximum rating using existing heapify algorithm by applying negative multiplier on rating values
-
-    for i in range(len(bizData.index)):
-        heap_dict.append((-1*(bizData['rating'][i]),bizData['id'][i]))
-
-    heapq.heapify(heap_dict)
-
-    sortedList = []
-
-    for i in range(topX):
-        sortedList.append(heapq.heappop(heap_dict))
-    
-    sortedDf = pd.DataFrame(sortedList, columns=['rating','id'])
-    outputDf = pd.merge(sortedDf, bizData, on='id', how='left')
-    outputDf = outputDf.drop(['rating_y'], axis=1)
-    outputDf.rename(columns={'rating_x':'rating'}, inplace=True)
-    outputDf['rating'] = outputDf['rating'].apply(lambda x: x*-1)
-    
-    return outputDf
-
-def heapSortByPrice(bizData, topX, sortOrder):
-    ''' takes in Pandas dataframe with price and id field and sorts via heapsort
-    returns a sorted dataframe'''
-    #requires sortOrder as argument, where sortOrder can be 'ascending' or 'descending' order of price for sorting
-
-    heap_dict = []
-
-    if sortOrder.lower() == 'ascending' or sortOrder.lower() == "descending":
-        if sortOrder.lower() == 'ascending':
-            for i in range(len(bizData.index)):
-                heap_dict.append((len(bizData['price'][i]),bizData['id'][i]))
-        else:
-            for i in range(len(bizData.index)):
-                heap_dict.append((-1*len(bizData['price'][i]),bizData['id'][i]))
+    if isAscending == True:
+        newHeap = Heap(len(arr))
+        for i in range(len(arr)):
+            newHeap.insert(arr[i],lambda a,b: a[field]>b[field])
+        for j in range(topN):
+            sortedList.append(newHeap.remove(lambda a,b: a[field]>b[field]))
+        
     else:
-        print('invalid sort order')
-        return
+        newHeap = Heap(len(arr))
+        for i in range(len(arr)):
+            newHeap.insert(arr[i], lambda a,b: a[field]<b[field])
+        for j in range(topN):
+            sortedList.append(newHeap.remove(lambda a,b: a[field]<b[field]))
+        
+    return sortedList
 
-    heapq.heapify(heap_dict)
-
-    sortedList = []
-
-    for i in range(topX):
-        sortedList.append(heapq.heappop(heap_dict))
-    
-    sortedDf = pd.DataFrame(sortedList, columns=['price','id'])
-    
-    outputDf = pd.merge(sortedDf, bizData, on='id', how='left')
-    outputDf = outputDf.drop(['price_y'], axis=1)
-    outputDf.rename(columns={'price_x':'price'}, inplace=True)
-    outputDf['price'] = outputDf['price'].apply(lambda x: x*'$' if sortOrder == 'ascending' else (x*-1)*'$')
-    
-    return outputDf
-
-testData = {
-    'id': ['test1','t2]'],
-    'distance': [456,123],
-    'lat': [13123,12434],
-    'long': [123124,46788],
-    'rating': [4.6, 4.9],
-    'price': ['$', '$$']}
-
-ls = pd.DataFrame(testData)
-
-# print(heapSortByDistance(ls, 2))
-# print(heapSortByPrice(ls, 2, 'descending'))
-# print(heapSortByReview(ls, 2))
