@@ -4,6 +4,7 @@ from imghdr import tests
 from matplotlib.pyplot import axis
 import pandas as pd
 import heapq
+import time
 
 def heapSortByDistance(bizData, topX):
     ''' takes in Pandas dataframe with distance and id field and sorts via heapsort
@@ -100,6 +101,6 @@ testData = {
 
 ls = pd.DataFrame(testData)
 
-print(heapSortByDistance(ls, 2))
-print(heapSortByPrice(ls, 2, 'descending'))
-print(heapSortByReview(ls, 2))
+# print(heapSortByDistance(ls, 2))
+# print(heapSortByPrice(ls, 2, 'descending'))
+# print(heapSortByReview(ls, 2))

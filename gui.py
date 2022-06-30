@@ -5,6 +5,7 @@ import json
 import folium
 import MergeSort
 import CategoryAndFilter as ct
+import Heapsort
 
 
 st.write("""
@@ -34,10 +35,30 @@ selected_filter_category = st.sidebar.selectbox("Filter Category", filter_catego
 # Output Results
 st.subheader("Here are the Top 5 restaurants based on your selection")
 
+print(len(data))
+
+#Mergesort
+# if selected_filter_category == "Distance":
+#     lst = MergeSort.getFirstN(data, "distance", 5, False)
+# elif selected_filter_category == "Rating/Review":           # TODO: Filter categories to discuss. Not all json objects has 'Price' 
+#     lst = MergeSort.getFirstN(data, "rating", 5, False)
+
+#Heapsort
+bizData = pd.DataFrame()
+print(data[0])
+for i in range(len(data)):
+
+    newDict = {x: data[i][x] for x in ['id', 'name', 'rating', 'price', 'distance', 'review_count'] if x in data[i].keys()}
+    bizData = bizData.append(newDict, ignore_index=True)
+
+print(bizData)
+
 if selected_filter_category == "Distance":
-    lst = MergeSort.getFirstN(data, "distance", 5, False)
+    lst = Heapsort.heapSortByDistance(bizData, 5)
 elif selected_filter_category == "Rating/Review":           # TODO: Filter categories to discuss. Not all json objects has 'Price' 
-    lst = MergeSort.getFirstN(data, "rating", 5, False)
+    lst = Heapsort.heapSortByReview(bizData, 5)
+
+print(lst)
 
 df = pd.DataFrame(lst)
 df = df[["name", "distance", "rating", "review_count"]]
