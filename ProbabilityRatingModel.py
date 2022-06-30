@@ -18,5 +18,4 @@ def exponential(review_count, rating):
     This uses an EXPONENTIAL probability model.
     """
     
-
     return abs(review_count/(sqrt((1/0.09)*(review_count**2)+1000000)) + 0.7)*rating
