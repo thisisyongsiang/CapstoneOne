@@ -141,18 +141,18 @@ def filterDataByFieldsAndValueRanges(data:List[Dict],fields:List[str],valueRange
     return output 
 
 def showExample():
-    dir="yelpAPIData.json"
+    dir="yelpAPIDataNew.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
+    print(len(data))
     cat=getCategories(data)
     print(cat.keys())
     caf=cat['cafes']
-    print(caf)
     #print(filterDataByFieldAndValue(caf,"price","$"))
     foods = getMultipleFoodCategories(data,categories=['pizza','italian'])
-    [print(f['name'],f['categories']) for f in foods]
+    #[print(f['name'],f['categories']) for f in foods]
     filtered=filterDataByFieldsAndValueRanges(data,['rating','price'],[[3.0,5.0],[2,3]])
-    [print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
+    #[print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
     #[print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",[1,3])]
     #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
 showExample()
