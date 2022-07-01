@@ -169,9 +169,4 @@ def showExample():
     filtered=filterDataByFieldsAndValueRanges(data,['rating','price'],[[3.0,5.0],[2,3]])
     #[print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
     #[print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",[1,3])]
-<<<<<<< HEAD
     #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
-=======
-    #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
-#showExample()
->>>>>>> Update gui and SimplifyData
