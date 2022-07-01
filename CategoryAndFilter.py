@@ -134,13 +134,6 @@ def getMultipleFoodCategories(data:List[Dict],categories:List[str]):
             output.append(d)
     return output
 
-def filterVisited(data:List[Dict], visited:List[str]):
-    cats=set(visited)
-    output=[]
-    for d in data:
-        if d['name'] not in cats:
-            output.append(d)
-    return output
 
 def filterDataByFieldsAndValueRanges(data:List[Dict],fields:List[str],valueRanges):
     """
