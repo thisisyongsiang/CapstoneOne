@@ -47,7 +47,7 @@ range_price = st.sidebar.slider(
      'Price Range',
      0, 5, (0, 5), step=1)
 
-filter_visited = st.sidebar.radio("Remove previously visited places?", ("Yes", "No"))
+filter_visited = st.sidebar.radio("Remove previously visited places?", ("No", "Yes"))
 
 # Get User Input filtered data if Location is input
 if (selected_location != ""):
@@ -72,7 +72,7 @@ if (selected_location != ""):
 # Output Results
 st.subheader("Top 5 Recommended Restaurants based on your selection")
 
-lst = Heapsort.getFirstN(clean_data, "recommendation", 20, False)
+lst = Heapsort.getFirstN(clean_data, "recommendation", 5, False)
 
 df = pd.DataFrame(lst)
 
@@ -87,14 +87,14 @@ else:
 st.subheader("")
 
 # Generate Map
-map_kenya = folium.Map(location=center, zoom_start=13)
-folium.Marker(center, popup = "You are here!", icon=folium.Icon(color="red")).add_to(map_kenya)
+map_sg = folium.Map(location=center, zoom_start=13)
+folium.Marker(center, popup = "You are here!", icon=folium.Icon(color="red")).add_to(map_sg)
 
 # Add locations to map
 for row in lst:
     location = [row["coordinates"]["latitude"], row["coordinates"]["longitude"]]
-    folium.Marker(location, popup = folium.Popup("<b>{}</b><br>{}".format(row["name"], row["location"]["display_address"]), max_width=300), tooltip=row["name"]).add_to(map_kenya)
+    folium.Marker(location, popup = folium.Popup("<b>{}</b><br>{}".format(row["name"], row["location"]["display_address"]), max_width=300), tooltip=row["name"]).add_to(map_sg)
 
-map_kenya.save("map.html")
+map_sg.save("map.html")
 map = open("map.html")
 components.html(html=map.read(), width=750, height=500, scrolling=True)
