@@ -18,13 +18,13 @@ def getCategories(data:List[str],origin:List[float]=None ):
 
     cat={}
     for d in data:
-        if d['is_closed']:
-            continue
-        if 'price' in d:
-            if type(d['price'])==str:
-                d["price"]=len(d['price'])
-        if origin:
-            d['distance']=GetDistance.GetDistanceFromCoordinates(origin,[d['coordinates']['latitude'],d['coordinates']['longitude']])
+        # if d['is_closed']:            ### Can remove? 
+        #     continue
+        # if 'price' in d:
+        #     if type(d['price'])==str:
+        #         d["price"]=len(d['price'])
+        # if origin:
+        #     d['distance']=GetDistance.GetDistanceFromCoordinates(origin,[d['coordinates']['latitude'],d['coordinates']['longitude']])
         dCat = d['categories']
         for c in dCat:
             food=c["title"].lower()
@@ -51,20 +51,32 @@ def simplifyData(data:List[str],origin:List[float]=None ):
     """ 
     output=[]
     for d in data:
-        if d['is_closed']:continue
         obj={}
         obj['id']=d['id']
+        obj['name']=d['name']               ### Added 'name'
         obj['categories']=d['categories']
+        cat = []
+        for c in d['categories']:
+            cat.append(c["title"].lower())
+        obj['category'] = cat
         obj['coordinates']=d['coordinates']
+        obj['location'] = d['location']     ### Added location for mapping of address
         if 'price' in d:
-            obj["price"]=len(d['price'])
+            obj['price'] = len(d['price'])
+            obj['display_price']= len(d['price']) * "$"
+        else:                               ### Added else block
+            obj["price"] = 0
+            obj['display_price']= "NA"
         obj['rating']=d['rating']
         obj['review_count']=d['review_count']
+        obj['recommendation']=prm.exponential(obj['review_count'],obj['rating'])
         if origin:
-            obj['distance']=GetDistance.GetDistanceFromCoordinates(origin,[d['coordinates']['latitude'],d['coordinates']['longitude']])
+            if (d['coordinates']['latitude'] and d['coordinates']['longitude']):
+                obj['distance']=GetDistance.GetDistanceFromCoordinates(origin,[float(d['coordinates']['latitude']),float(d['coordinates']['longitude'])]) # Cast to Float
+            else:
+                continue
         else:
             obj['distance']=d['distance']
-        obj['recommendation']=prm.exponential(obj['review_count'],obj['rating'])
         output.append(obj)
     return output
 
@@ -157,4 +169,9 @@ def showExample():
     filtered=filterDataByFieldsAndValueRanges(data,['rating','price'],[[3.0,5.0],[2,3]])
     #[print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
     #[print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",[1,3])]
+<<<<<<< HEAD
     #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
+=======
+    #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
+#showExample()
+>>>>>>> Update gui and SimplifyData

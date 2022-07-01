@@ -73,6 +73,7 @@ def getFirstN(arr, field, topN, isAscending=True):
     Takes in list of dictionaries, field for sorting and boolean value for ascending/descending order of sort and returns top N items in a list of dictionaries
     """
 
+    topN = min(topN, len(arr))
     sortedList = []
 
     if isAscending == True:
