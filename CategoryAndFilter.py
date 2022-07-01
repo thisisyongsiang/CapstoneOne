@@ -53,18 +53,18 @@ def simplifyData(data:List[str],origin:List[float]=None ):
     for d in data:
         obj={}
         obj['id']=d['id']
-        obj['name']=d['name']               ### Added 'name'
+        obj['name']=d['name']
         obj['categories']=d['categories']
         cat = []
         for c in d['categories']:
             cat.append(c["title"].lower())
         obj['category'] = cat
         obj['coordinates']=d['coordinates']
-        obj['location'] = d['location']     ### Added location for mapping of address
+        obj['location'] = d['location']
         if 'price' in d:
             obj['price'] = len(d['price'])
             obj['display_price']= len(d['price']) * "$"
-        else:                               ### Added else block
+        else:
             obj["price"] = 0
             obj['display_price']= "NA"
         obj['rating']=d['rating']
@@ -77,6 +77,10 @@ def simplifyData(data:List[str],origin:List[float]=None ):
                 continue
         else:
             obj['distance']=d['distance']
+        if d['is_closed']:
+            obj['is_closed']=d['is_closed']
+        else:
+            obj['is_closed']=False
         output.append(obj)
     return output
 
@@ -170,3 +174,4 @@ def showExample():
     #[print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
     #[print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",[1,3])]
     #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
+#showExample()
