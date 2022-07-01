@@ -91,8 +91,8 @@ def getFirstN(arr, field, topN, isAscending=True):
     else:
         newHeap = Heap(len(arr))
         for i in range(len(arr)):
-            newHeap.insert(arr[i], lambda a,b: a[field]+(1/a['distance'])>b[field]+(1/b['distance']))
+            newHeap.insert(arr[i], lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance']))
         for j in range(topN):
-            sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])>b[field]+(1/b['distance'])))
+            sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance'])))
         
     return sortedList
