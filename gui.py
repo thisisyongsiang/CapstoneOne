@@ -77,6 +77,7 @@ if not df.empty:
 else:
     st.write("!!! No restaurants matched your criteria. Please adjust your filters. !!!")
 
+st.subheader("")
 
 # Generate Map
 map_kenya = folium.Map(location=center, zoom_start=13)
