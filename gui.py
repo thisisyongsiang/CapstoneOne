@@ -6,15 +6,13 @@ import folium
 import MergeSort
 import CategoryAndFilter as ct
 import Heapsort
-import math
+import csv
 
 
 st.write("""
 # Food Recommender
-
-### Random restaurant picker!
-
 """)
+st.subheader("")
 
 # Get Results from Yelp API
 dir="yelpAPIDataMerged.json"
@@ -56,21 +54,43 @@ if (selected_location != ""):
     clean_data = ct.simplifyData(data, latlong)
     center = latlong
 
-    print("Clean Data 1: ", len(clean_data))
     clean_data = ct.getMultipleFoodCategories(clean_data, [selected_food_category])
     clean_data = ct.filterDataByFieldAndValueRange(clean_data, 'price', [range_price[0],range_price[1]])
     clean_data = ct.filterDataByFieldAndValueRange(clean_data, 'distance', [range_distance[0],range_distance[1]])
-    print("Clean Data 2: ", len(clean_data))
 
     if (filter_visited == "Yes"):
-        df_visited = pd.read_csv("visited.csv", delimiter=',')
-        visited = list(df_visited.columns.values)
+        visited = []
+        with open("visited.csv", "r") as f:
+            reader = csv.reader(f)
+            for row in reader:
+                visited.append(row[0])
+
         clean_data = ct.filterVisited(clean_data, visited)
 
-    print("Clean Data 3: ", len(clean_data))
+
+st.sidebar.subheader("")
+st.sidebar.header("Other Features")
+
+places = [row['name'] for row in clean_data]
+places.sort()
+selected_visited = st.sidebar.selectbox("Select restaurant to add to list of visited places", places)
+result = st.sidebar.button("Add Restaurant")
+
+if result:
+    visited_places = []
+    with open("visited.csv", "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            visited_places.append(row[0])
+
+    if selected_visited not in visited_places:
+        visited_places.append(selected_visited)
+        with open("visited.csv", mode="w") as g:
+            g.write("\n".join(visited_places))
+
 
 # Output Results
-st.subheader("Top 5 Recommended Restaurants based on your selection")
+st.subheader("Top Recommended Restaurants")
 
 lst = Heapsort.getFirstN(clean_data, "recommendation", 5, False)
 
@@ -78,8 +98,11 @@ df = pd.DataFrame(lst)
 
 if not df.empty:
     df = df[["name", "distance", "rating", "review_count", "recommendation", "display_price", "category"]]
+    df["distance"] = df["distance"].astype(int)
+    df["rating"] = df["rating"].round(2).astype(str)
+    df["recommendation"] = df["recommendation"].round(2).astype(str)
     df.rename(columns = {"name":"Name", "distance":"Distance(m)", "rating":"Rating", "review_count":"Reviews", "recommendation": "Recommendation", "display_price":"Price"}, inplace=True)
-    df = df.style.hide_index()
+    df = df.style.hide(axis="index")
     st.write(df.to_html(), unsafe_allow_html=True)
 else:
     st.write("!!! No restaurants matched your criteria. Please adjust your filters. !!!")
