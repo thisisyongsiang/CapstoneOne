@@ -3,6 +3,7 @@ import json
 import GetDistance
 from re import T
 from typing import Dict, List
+import ProbabilityRatingModel as prm
 
 def getCategories(data:List[str],origin:List[float]=None ):
     """
@@ -63,7 +64,9 @@ def simplifyData(data:List[str],origin:List[float]=None ):
             obj['distance']=GetDistance.GetDistanceFromCoordinates(origin,[d['coordinates']['latitude'],d['coordinates']['longitude']])
         else:
             obj['distance']=d['distance']
-        output.append(d)
+        obj['recommendation']=prm.exponential(obj['review_count'],obj['rating'])
+        output.append(obj)
+    return output
 
 
 def filterDataByFieldAndValue(data:List[Dict],field:str,value):
@@ -155,4 +158,3 @@ def showExample():
     #[print (f['name'],'price :',f['price'],'rating :',f['rating']) for f in filtered]
     #[print(c['name'],c['price']) for c in filterDataByFieldAndValueRange(caf,"price",[1,3])]
     #[print(c['name'],c['distance']) for c in filterDataByFieldAndValueRange(caf,"distance",[0,2000])]
-showExample()
