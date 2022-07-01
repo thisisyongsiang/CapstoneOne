@@ -159,10 +159,14 @@ def filterDataByFieldsAndValueRanges(data:List[Dict],fields:List[str],valueRange
             output.append(d)
     return output 
 
+
+
 def showExample():
     dir="yelpAPIDataNew.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
+    f.close()
+    
     print(len(data))
     cat=getCategories(data)
     print(cat.keys())
