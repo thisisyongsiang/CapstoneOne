@@ -46,7 +46,7 @@ range_distance = st.sidebar.slider(
 
 range_price = st.sidebar.slider(
      'Price Range',
-     1, 5, (1, 5), step=1)
+     0, 5, (0, 5), step=1)
 
 
 # Get User Input filtered data if Location is input
@@ -57,25 +57,25 @@ if (selected_location != ""):
     center = latlong
 
     print("Clean Data 1: ", len(clean_data))
-    print("Filter cat: ", selected_food_category)
     clean_data = ct.getMultipleFoodCategories(clean_data, [selected_food_category])
+    clean_data = ct.filterDataByFieldAndValueRange(clean_data, 'price', [range_price[0],range_price[1]])
+    clean_data = ct.filterDataByFieldAndValueRange(clean_data, 'distance', [range_distance[0],range_distance[1]])
     print("Clean Data 2: ", len(clean_data))
-
-
-
 
 # Output Results
 st.subheader("Top 5 Recommended Restaurants based on your selection")
 
 lst = Heapsort.getFirstN(clean_data, "recommendation", 5, False)
-df = pd.DataFrame(lst)
-df = df[["name", "distance", "rating", "review_count", "recommendation", "display_price", "category"]]
-df.rename(columns = {"name":"Name", "distance":"Distance(m)", "rating":"Rating", "review_count":"Reviews", "recommendation": "Recommendation", "display_price":"Price"}, inplace=True)
-df = df.style.hide_index()
-st.write(df.to_html(), unsafe_allow_html=True)
 
-st.write("User Location: {}".format(selected_location))
-st.write("Selected Food Category: {}".format(selected_food_category))
+df = pd.DataFrame(lst)
+
+if not df.empty:
+    df = df[["name", "distance", "rating", "review_count", "recommendation", "display_price", "category"]]
+    df.rename(columns = {"name":"Name", "distance":"Distance(m)", "rating":"Rating", "review_count":"Reviews", "recommendation": "Recommendation", "display_price":"Price"}, inplace=True)
+    df = df.style.hide_index()
+    st.write(df.to_html(), unsafe_allow_html=True)
+else:
+    st.write("!!! No restaurants matched your criteria. Please adjust your filters. !!!")
 
 
 # Generate Map
