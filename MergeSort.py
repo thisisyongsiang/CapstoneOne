@@ -36,6 +36,8 @@ def getFirstN(arr,field,k,IsAscending=True):
         mergeSort(arr,0,len(arr)-1,lambda a,b:a[field]<=b[field])
     else:
         mergeSort(arr,0,len(arr)-1,lambda a,b:a[field]>b[field])
+    if len(arr)<=k:
+        return (arr)
     return arr[0:k]
 
 def example():

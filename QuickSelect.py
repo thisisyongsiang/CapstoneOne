@@ -39,6 +39,7 @@ def getFirstN(arr,field,k,IsAscending=True):
     Returns first N Items in based on field
     using quickselect
     '''
+    if len(arr)<=k:return arr
     if IsAscending:
         return quickSelect(arr,0,len(arr)-1,k,lambda a,b:a[field]<=b[field])
     else:
@@ -50,8 +51,4 @@ def example():
     f=open(dir,encoding='utf-8')
     data=json.load(f)
     firstN=getFirstN(data,'review_count',10,False)
-<<<<<<< HEAD
     [print(c['name'],c['review_count']) for c in firstN]
-=======
-    [print(c['name'],c['review_count']) for c in firstN]
->>>>>>> c768200dd6fa08de6a3ebb153491854006652acc
