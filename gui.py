@@ -1,3 +1,4 @@
+from numpy import sort_complex
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
@@ -15,34 +16,48 @@ st.write("""
 
 """)
 
-# Get and Sort Results from Yelp API
+# Get Results from Yelp API
 dir="yelpAPIData.json"
 f=open(dir,encoding='utf-8')
 data=json.load(f)
 
-categories = ct.getCategories(data)
 
+# Get Food Categories
+unwanted = ["arts & entertainment", "bikes", "butcher", "candy stores", "car wash", "caterers", "convenience stores", "department stores", "discount store", "do-it-yourself food", "electronics", "food", "food delivery services", "gas stations", "henghwa", "home services", "imported food", "international grocery", "internet cafes", "meat shops", "nutritionists", "restaurants", "seafood markets", "shopping", "venue & event spaces", "wholesale stores"]
+categories = [*ct.getCategories(data)]
+categories_clean = [i for i in categories if i not in unwanted]
+categories_clean.sort()
 
 # User Input
 st.sidebar.header("User Inputs")
 
 selected_location = st.sidebar.text_input("Lat/Long", "")
-selected_food_category = st.sidebar.selectbox("Food Category", categories)
+selected_food_category = st.sidebar.selectbox("Food Category", categories_clean)
 
-filter_categories = ["Distance", "Rating/Review", "Price"]
-selected_filter_category = st.sidebar.selectbox("Filter Category", filter_categories)
+range_distance = st.sidebar.slider(
+     'Distance Range',
+     0, 10000, (0, 10000), step=100)
+
+range_price = st.sidebar.slider(
+     'Price Range',
+     1, 5, (1, 5), step=1)
+
 
 # Output Results
-st.subheader("Here are the Top 5 restaurants based on your selection")
+st.subheader("Top 5 Recommended Restaurants based on your selection")
 
+<<<<<<< HEAD
 print(len(data))
 
 #Mergesort
+=======
+>>>>>>> Add range sliders for distance and price selection and updated user input sidebar
 # if selected_filter_category == "Distance":
 #     lst = MergeSort.getFirstN(data, "distance", 5, False)
 # elif selected_filter_category == "Rating/Review":           # TODO: Filter categories to discuss. Not all json objects has 'Price' 
 #     lst = MergeSort.getFirstN(data, "rating", 5, False)
 
+<<<<<<< HEAD
 #Heapsort
 bizData = pd.DataFrame()
 print(data[0])
@@ -59,6 +74,9 @@ elif selected_filter_category == "Rating/Review":           # TODO: Filter categ
     lst = Heapsort.heapSortByReview(bizData, 5)
 
 print(lst)
+=======
+lst = MergeSort.getFirstN(data, "distance", 5, False)
+>>>>>>> Add range sliders for distance and price selection and updated user input sidebar
 
 df = pd.DataFrame(lst)
 df = df[["name", "distance", "rating", "review_count"]]
@@ -68,13 +86,13 @@ st.write(df.to_html(), unsafe_allow_html=True)
 
 st.write("User Location: {}".format(selected_location))
 st.write("Selected Food Category: {}".format(selected_food_category))
-st.write("Selected Filter Category: {}".format(selected_filter_category))
 
 
 # Generate Map
 center = [1.35644, 103.83297]   # User Location
 map_kenya = folium.Map(location=center, zoom_start=13)
 folium.Marker(center, popup = "You are here!", icon=folium.Icon(color="red")).add_to(map_kenya)
+
 
 # Add locations to map
 for row in lst:
