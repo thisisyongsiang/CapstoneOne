@@ -1,4 +1,3 @@
-from numpy import sort_complex
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
@@ -48,6 +47,7 @@ range_price = st.sidebar.slider(
      'Price Range',
      0, 5, (0, 5), step=1)
 
+filter_visited = st.sidebar.radio("Remove previously visited places?", ("Yes", "No"))
 
 # Get User Input filtered data if Location is input
 if (selected_location != ""):
@@ -62,10 +62,17 @@ if (selected_location != ""):
     clean_data = ct.filterDataByFieldAndValueRange(clean_data, 'distance', [range_distance[0],range_distance[1]])
     print("Clean Data 2: ", len(clean_data))
 
+    if (filter_visited == "Yes"):
+        df_visited = pd.read_csv("visited.csv", delimiter=',')
+        visited = list(df_visited.columns.values)
+        clean_data = ct.filterVisited(clean_data, visited)
+
+    print("Clean Data 3: ", len(clean_data))
+
 # Output Results
 st.subheader("Top 5 Recommended Restaurants based on your selection")
 
-lst = Heapsort.getFirstN(clean_data, "recommendation", 5, False)
+lst = Heapsort.getFirstN(clean_data, "recommendation", 20, False)
 
 df = pd.DataFrame(lst)
 
