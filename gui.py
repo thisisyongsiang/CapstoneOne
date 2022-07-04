@@ -7,6 +7,9 @@ import MergeSort
 import CategoryAndFilter as ct
 import Heapsort
 import math
+from bokeh.models.widgets import Button
+from bokeh.models import CustomJS
+from streamlit_bokeh_events import streamlit_bokeh_events
 
 
 st.write("""
@@ -35,7 +38,35 @@ categories_clean.sort()
 st.sidebar.header("User Inputs")
 
 center = [1.35644, 103.83297]   # User Location
-selected_location = st.sidebar.text_input("Lat/Long", "")
+
+button_press = False
+latlonginput = ""
+
+with st.sidebar.container():
+    loc_button = Button()
+    loc_button.js_on_event("button_click", CustomJS(code="""
+        navigator.geolocation.getCurrentPosition(
+            (loc) => {
+                document.dispatchEvent(new CustomEvent("GET_LOCATION", {detail: {lat: loc.coords.latitude, lon: loc.coords.longitude}}))
+            }
+        )
+        """))
+    result = streamlit_bokeh_events(
+        loc_button,
+        events="GET_LOCATION",
+        key="get_location",
+        refresh_on_update=False,
+        override_height=75,
+        debounce_time=0)
+
+    selected_location = st.sidebar.text_input("Lat/Long", latlonginput)
+
+    if result:
+        latlonginput = latlonginput + str(result['GET_LOCATION']['lat']) + ", " + str(result['GET_LOCATION']['lon'])
+        print(latlonginput)
+        st.write(latlonginput)
+        selected_location = latlonginput
+
 
 selected_food_category = st.sidebar.selectbox("Food Category", categories_clean)
 
@@ -97,4 +128,41 @@ for row in lst:
 
 map_sg.save("map.html")
 map = open("map.html")
+
 components.html(html=map.read(), width=750, height=500, scrolling=True)
+
+
+#Alternative method to retrieve user location
+
+# html_location = """
+#     <html>
+#     <body>
+
+#         <p>Click the button to get your coordinates.</p>
+
+#             <button onclick="getLocation()">Try It</button>
+
+#         <p id="demo"></p>
+
+#         <script>
+#         var x = document.getElementById("demo");
+
+#         function getLocation() {
+#         if (navigator.geolocation) {
+#             navigator.geolocation.getCurrentPosition(showPosition);
+#         } else { 
+#             x.innerHTML = "Geolocation is not supported by this browser.";
+#         }
+#         }
+
+#         function showPosition(position) {
+#         x.innerHTML = "Latitude: " + position.coords.latitude + 
+#         "<br>Longitude: " + position.coords.longitude;
+#         }
+#     </script>
+
+#     </body>
+#     </html>
+#     """
+
+# components.html(html_location, width=250, height=250)

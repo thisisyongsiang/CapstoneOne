@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_f9a3fddaf4bcc332041bcbaeb85f90af {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>    
+    
+            <div class="folium-map" id="map_f9a3fddaf4bcc332041bcbaeb85f90af" ></div>
+        
+</body>
+<script>    
+    
+            var map_f9a3fddaf4bcc332041bcbaeb85f90af = L.map(
+                "map_f9a3fddaf4bcc332041bcbaeb85f90af",
+                {
+                    center: [1.3972616860428517, 103.88151935452308],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 13,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_892bba4614483bdb59d8edac29a2d9fb = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_f9a3fddaf4bcc332041bcbaeb85f90af);
+        
+    
+            var marker_3b4369fa0472f1cf9de5923037a7c34a = L.marker(
+                [1.3972616860428517, 103.88151935452308],
+                {}
+            ).addTo(map_f9a3fddaf4bcc332041bcbaeb85f90af);
+        
+    
+            var icon_c184ad3191e3e8afcafd39c5b15c65ea = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_3b4369fa0472f1cf9de5923037a7c34a.setIcon(icon_c184ad3191e3e8afcafd39c5b15c65ea);
+        
+    
+        var popup_16a4bb4cbfcdfb439d99d82a1b82fb58 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_e097213d781f7173a1e075ef15a42965 = $(`<div id="html_e097213d781f7173a1e075ef15a42965" style="width: 100.0%; height: 100.0%;">You are here!</div>`)[0];
+            popup_16a4bb4cbfcdfb439d99d82a1b82fb58.setContent(html_e097213d781f7173a1e075ef15a42965);
+        
+
+        marker_3b4369fa0472f1cf9de5923037a7c34a.bindPopup(popup_16a4bb4cbfcdfb439d99d82a1b82fb58)
+        ;
+
+        
+    
+    
+            var marker_a34c45e35636f9837fcbe655156199fb = L.marker(
+                [1.39702, 103.8729019],
+                {}
+            ).addTo(map_f9a3fddaf4bcc332041bcbaeb85f90af);
+        
+    
+        var popup_3bc273abb1ef2b6ec2120891a2dede1a = L.popup({"maxWidth": 300});
+
+        
+            var html_811d6e0e3b923540c25155e0c8eb4b2d = $(`<div id="html_811d6e0e3b923540c25155e0c8eb4b2d" style="width: 100.0%; height: 100.0%;"><b>Jane's Cake Station</b><br>['265 Jln Kayu', 'Singapore 799493', 'Singapore']</div>`)[0];
+            popup_3bc273abb1ef2b6ec2120891a2dede1a.setContent(html_811d6e0e3b923540c25155e0c8eb4b2d);
+        
+
+        marker_a34c45e35636f9837fcbe655156199fb.bindPopup(popup_3bc273abb1ef2b6ec2120891a2dede1a)
+        ;
+
+        
+    
+    
+            marker_a34c45e35636f9837fcbe655156199fb.bindTooltip(
+                `<div>
+                     Jane's Cake Station
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_7fe5c958cca42d24c3993def3c72a6cf = L.marker(
+                [1.3979889, 103.8882097],
+                {}
+            ).addTo(map_f9a3fddaf4bcc332041bcbaeb85f90af);
+        
+    
+        var popup_3a1be788a649d50a3dd71644ac3196b1 = L.popup({"maxWidth": 300});
+
+        
+            var html_ba5d54bc5c3cd6561510976200b9ca7d = $(`<div id="html_ba5d54bc5c3cd6561510976200b9ca7d" style="width: 100.0%; height: 100.0%;"><b>Jenny Bakery Singapore</b><br>['336D Anchorvale Crescent', '#03-60', 'Singapore 544336', 'Singapore']</div>`)[0];
+            popup_3a1be788a649d50a3dd71644ac3196b1.setContent(html_ba5d54bc5c3cd6561510976200b9ca7d);
+        
+
+        marker_7fe5c958cca42d24c3993def3c72a6cf.bindPopup(popup_3a1be788a649d50a3dd71644ac3196b1)
+        ;
+
+        
+    
+    
+            marker_7fe5c958cca42d24c3993def3c72a6cf.bindTooltip(
+                `<div>
+                     Jenny Bakery Singapore
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_b73ef5aef36b340d9d6e70a873522def = L.marker(
+                [1.3920112, 103.8950057],
+                {}
+            ).addTo(map_f9a3fddaf4bcc332041bcbaeb85f90af);
+        
+    
+        var popup_7b854c21c80bbd0565ee3a7ad5380fbd = L.popup({"maxWidth": 300});
+
+        
+            var html_288e7d34b763e1eda2127264f03f57bd = $(`<div id="html_288e7d34b763e1eda2127264f03f57bd" style="width: 100.0%; height: 100.0%;"><b>Bengawan Solo</b><br>['1 Sengkang Square', '#B1-28', 'Singapore 545078', 'Singapore']</div>`)[0];
+            popup_7b854c21c80bbd0565ee3a7ad5380fbd.setContent(html_288e7d34b763e1eda2127264f03f57bd);
+        
+
+        marker_b73ef5aef36b340d9d6e70a873522def.bindPopup(popup_7b854c21c80bbd0565ee3a7ad5380fbd)
+        ;
+
+        
+    
+    
+            marker_b73ef5aef36b340d9d6e70a873522def.bindTooltip(
+                `<div>
+                     Bengawan Solo
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_5a4e09867963d36e7d834fc0dcb92038 = L.marker(
+                [1.387417, 103.869026],
+                {}
+            ).addTo(map_f9a3fddaf4bcc332041bcbaeb85f90af);
+        
+    
+        var popup_ddc6cb6abc21eb06fb727436198a702b = L.popup({"maxWidth": 300});
+
+        
+            var html_e926659aebb45b7309231e9b8c07cd41 = $(`<div id="html_e926659aebb45b7309231e9b8c07cd41" style="width: 100.0%; height: 100.0%;"><b>Cedele</b><br>['1 Seletar Rd', '#02-14', 'Singapore 807011', 'Singapore']</div>`)[0];
+            popup_ddc6cb6abc21eb06fb727436198a702b.setContent(html_e926659aebb45b7309231e9b8c07cd41);
+        
+
+        marker_5a4e09867963d36e7d834fc0dcb92038.bindPopup(popup_ddc6cb6abc21eb06fb727436198a702b)
+        ;
+
+        
+    
+    
+            marker_5a4e09867963d36e7d834fc0dcb92038.bindTooltip(
+                `<div>
+                     Cedele
+                 </div>`,
+                {"sticky": true}
+            );
+        
+</script>
