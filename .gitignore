@@ -1,2 +1,5 @@
 __pycache__/GetDistance.cpython-39.pyc
 __pycache__/QuickSelect.cpython-39.pyc
+.venv/
+map.html
+__pycache__/
