@@ -73,28 +73,38 @@ class Heap:
                                 str(self.Heap[2 * i])+" RIGHT CHILD : "+
                                 str(self.Heap[2 * i + 1]))
 
+class getItemsByField:
 
+    def __init__(self, arr, field, isAscending=True):
+        self.arr = arr
+        self.field = field
+        self.isAscending = isAscending
+        self.newHeap = Heap(arr)
+        self.removeCount = 0
 
-def getFirstN(arr, field, topN, isAscending=True):
+    def getTopN(self, topN):
+        """
+        Takes in list of dictionaries, field for sorting and boolean value for ascending/descending order of sort and returns top N items in a list of dictionaries
+        """
 
-    """
-    Takes in list of dictionaries, field for sorting and boolean value for ascending/descending order of sort and returns top N items in a list of dictionaries
-    """
+        topN = min(topN, len(self.arr)-self.removeCount)
+        sortedList = []
+        
+        if self.isAscending == True:
+            self.newHeap.generateHeap(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance']))
+            for j in range(topN):
+                sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
+        else:
+            self.newHeap.generateHeap(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance']))
+            for j in range(topN):
+                sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
 
-    topN = min(topN, len(arr))
-    sortedList = []
-    newHeap = Heap(arr)
+        self.removeCount += topN
+
+        return sortedList
     
-    if isAscending == True:
-        newHeap.generateHeap(lambda a,b: a[field]+(1/a['distance'])>b[field]+(1/b['distance']))
-        print(newHeap[0])
-        for j in range(topN):
-            sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])>b[field]+(1/b['distance'])))
-    else:
-        newHeap.generateHeap(lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance']))
-        print(newHeap[0])
-        for j in range(topN):
-            sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance'])))
+
+
 
     # if isAscending == True:
     #     newHeap = Heap(len(arr))
@@ -110,7 +120,7 @@ def getFirstN(arr, field, topN, isAscending=True):
     #     for j in range(topN):
     #         sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance'])))
         
-    return sortedList
+        
 
 yelp_data = [
     {
@@ -598,11 +608,16 @@ yelp_data = [
         "distance": 332.33003907750265
     }]
 
-print('TOP 3 ITEMS ARE')
+print('TOP 5 ITEMS ARE')
 
-output = getFirstN(yelp_data[0:9], 'rating', 5 , False)
-# print(output)
 
-for i in range(len(output)):
-    print(output[i]['name'], output[i]['rating'])
+
+temp = getItemsByField(yelp_data[0:9], 'rating', False)
+
+for i in range(2):
+    output = temp.getTopN(5)
+
+    # print(output)
+    for j in range(len(output)):
+        print(output[j]['name'], output[j]['rating'])
 
