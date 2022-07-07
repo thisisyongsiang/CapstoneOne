@@ -1,6 +1,12 @@
 __pycache__/GetDistance.cpython-39.pyc
 __pycache__/QuickSelect.cpython-39.pyc
+<<<<<<< HEAD
 __pycache__/CategoryAndFilter.cpython-39.pyc
 __pycache__/Heapsort.cpython-39.pyc
 __pycache__/MergeSort.cpython-39.pyc
 __pycache__/ProbabilityRatingModel.cpython-39.pyc
+=======
+.venv/
+map.html
+__pycache__/
+>>>>>>> addf4a05bb1fe22109294794aaff0e8fea134006
