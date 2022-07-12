@@ -44,5 +44,3 @@ def weighted(rating, rating_pref, price, price_pref, distance, distance_pref):
 
     return weight_dict[rating_pref]*rating + weight_dict[price_pref]*price + weight_dict[distance_pref]*distance_score
 
-
-print(weighted(5,1,4,2,980,3))
