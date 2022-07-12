@@ -117,4 +117,4 @@ class getItemsByField:
 
 #     # print(output)
 #     for j in range(len(output)):
-#         print(output[j]['name'], output[j]['distance'])
+#         print(output[j]['name'], output[j]['distance'])git
