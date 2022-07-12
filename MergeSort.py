@@ -130,16 +130,16 @@ def example():
     dir="singaporeFnBAll.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
-    mergSort=MergeSort(data,'review_count',False)
+    mergSort=MergeSort(data,'price',False)
 
     firstN=mergSort.GetNextN(5)
-    [print(c['name'],c['review_count']) for c in firstN]
+    [print(c['name'],c['price']) for c in firstN]
     print('done')
     firstN=mergSort.GetNextN(5)
-    [print(c['name'],c['review_count']) for c in firstN]
+    [print(c['name'],c['price']) for c in firstN]
     print('done')
     firstN=mergSort.GetPrevN(5)
-    [print(c['name'],c['review_count']) for c in firstN]
+    [print(c['name'],c['price']) for c in firstN]
     print('done')
 
 example()
