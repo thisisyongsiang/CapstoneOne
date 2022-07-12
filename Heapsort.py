@@ -1,9 +1,11 @@
+import sys
+
 class Heap:
 
-    def __init__(self, maxsize):
-        self.maxsize = maxsize
-        self.size = 0
-        self.Heap = [0]*(self.maxsize + 1)
+    def __init__(self, arr):
+        self.maxsize = sys.maxsize
+        self.size = len(arr)
+        self.Heap = arr
         self.FRONT = 0
 
     
@@ -21,8 +23,8 @@ class Heap:
 
     def swap(self, fpos, spos):
         self.Heap[fpos], self.Heap[spos] = self.Heap[spos], self.Heap[fpos]
-        
-    def Heapit(self, pos, comparer):
+    
+    def bubbleDown(self, pos, comparer):
 
         child = self.leftChild(pos)
         done = False
@@ -53,46 +55,66 @@ class Heap:
             self.swap(curr, self.parent(curr))
             curr = self.parent(curr)
     
-    def generateHeap(self, comparer):
+    def heapify(self, comparer):
 
-        for pos in range(self.size//2, 0, -1):
-            self.Heapit(pos, comparer)
+        for pos in range(self.parent(self.size-1), -1, -1):
+            self.bubbleDown(pos, comparer)
     
     def remove(self, comparer):
         popped = self.Heap[self.FRONT]
         self.Heap[self.FRONT]= self.Heap[self.size-1]
         self.size -= 1
-        self.Heapit(self.FRONT, comparer)
+        self.bubbleDown(self.FRONT, comparer)
         return popped
 
     def Print(self):
-        for i in range(1, self.maxsize//2+1, 1):
+        for i in range(0, self.parent(self.size-1), 1):
             print(" PARENT : "+ str(self.Heap[i])+" LEFT CHILD : "+ 
                                 str(self.Heap[2 * i])+" RIGHT CHILD : "+
                                 str(self.Heap[2 * i + 1]))
 
-
-def getFirstN(arr, field, topN, isAscending=True):
+class getItemsByField:
 
     """
-    Takes in list of dictionaries, field for sorting and boolean value for ascending/descending order of sort and returns top N items in a list of dictionaries
+    Class to heapify array and retrieve top items. Takes in list of dictionaries, field for sorting and boolean value for ascending/descending order of sort.
     """
 
-    topN = min(topN, len(arr))
-    sortedList = []
+    def __init__(self, arr, field, isAscending=True):
+        self.arr = arr
+        self.field = field
+        self.isAscending = isAscending
+        self.newHeap = Heap(arr)
+        self.removeCount = 0
 
-    if isAscending == True:
-        newHeap = Heap(len(arr))
-        for i in range(len(arr)):
-            newHeap.insert(arr[i],lambda a,b: a[field]+(1/a['distance'])>b[field]+(1/b['distance']))
-        for j in range(topN):
-            sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])>b[field]+(1/b['distance'])))
+    def getTopN(self, topN):
+        """
+        Returns top N items in a list of dictionaries
+        """
+
+        topN = min(topN, len(self.arr)-self.removeCount)
+        sortedList = []
         
-    else:
-        newHeap = Heap(len(arr))
-        for i in range(len(arr)):
-            newHeap.insert(arr[i], lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance']))
-        for j in range(topN):
-            sortedList.append(newHeap.remove(lambda a,b: a[field]+(1/a['distance'])<b[field]+(1/b['distance'])))
-        
-    return sortedList
+        if self.isAscending == True:
+            self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance']))
+            for j in range(topN):
+                sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
+        else:
+            self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance']))
+            for j in range(topN):
+                sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
+
+        self.removeCount += topN
+
+        return sortedList
+
+
+
+#sample code for using class and retrieving multiple topN items 
+# temp = getItemsByField(yelp_data, 'distance', True)
+
+# for i in range(2):
+#     output = temp.getTopN(5)
+
+#     # print(output)
+#     for j in range(len(output)):
+#         print(output[j]['name'], output[j]['distance'])git

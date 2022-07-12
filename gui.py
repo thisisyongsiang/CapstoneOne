@@ -92,7 +92,7 @@ if result:
 # Output Results
 st.subheader("Top Recommended Restaurants")
 
-lst = Heapsort.getFirstN(clean_data, "recommendation", 5, False)
+lst = Heapsort.getItemsByField(clean_data, "recommendation", False).getTopN(5)
 
 df = pd.DataFrame(lst)
 
@@ -102,7 +102,7 @@ if not df.empty:
     df["rating"] = df["rating"].round(2).astype(str)
     df["recommendation"] = df["recommendation"].round(2).astype(str)
     df.rename(columns = {"name":"Name", "distance":"Distance(m)", "rating":"Rating", "review_count":"Reviews", "recommendation": "Recommendation", "display_price":"Price"}, inplace=True)
-    df = df.style.hide(axis="index")
+    df = df.style.hide(axis="index") 
     st.write(df.to_html(), unsafe_allow_html=True)
 else:
     st.write("!!! No restaurants matched your criteria. Please adjust your filters. !!!")

@@ -21,5 +21,5 @@ print("MergeSort - Time taken = {:.20f} seconds".format(time.time() - start_time
 
 # HeapSort
 start_time = time.time()
-firstN = Heapsort.heapSortByDistance(data, 5)
+firstN = Heapsort.getItemsByField(data, 'distance', False).getTopN(5)
 print("HeapSort - Time taken = {:.20f} seconds".format(time.time() - start_time))

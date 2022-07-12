@@ -1,10 +1,20 @@
 __pycache__/GetDistance.cpython-39.pyc
 __pycache__/QuickSelect.cpython-39.pyc
+<<<<<<< HEAD
+__pycache__/CategoryAndFilter.cpython-39.pyc
+__pycache__/Heapsort.cpython-39.pyc
+__pycache__/MergeSort.cpython-39.pyc
+__pycache__/ProbabilityRatingModel.cpython-39.pyc
+=======
 .venv/
 map.html
 __pycache__/
+<<<<<<< HEAD
 singapore.tsv
 singapore.json
 singaporeFnBAll.json
 singaporeFnB.json
 singapore2.json
+=======
+>>>>>>> addf4a05bb1fe22109294794aaff0e8fea134006
+>>>>>>> 433b4bdaf22e5f2eabac2a7aab78929bce3f3252
