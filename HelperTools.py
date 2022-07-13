@@ -14,7 +14,7 @@ def ConvertTSVtoJson(tsvFilePath,jsonFilePath):
 
             fields=[l.strip()for l in ln.split('\t')]
             # print(fields)
-            toInclude=True
+            toInclude=False
             obj={}
             for i in range(len(titles)):
                 # if titles[i]=='rating':
@@ -35,12 +35,15 @@ def ConvertTSVtoJson(tsvFilePath,jsonFilePath):
                     if not isFnB:
                         toInclude=False
                         break
+                    else:
+                        toInclude=True
                 val=fields[i]
                 if  titles[i]=='price':
                     if val=='Cheap':val=1
                     elif val=='Moderate':val=2
                     elif val=='Expensive':val=3
                     elif val=='Very Expensive':val=4
+                    elif val=='VeryExpensive':val=4
                 elif titles[i]=='name':
                     val=fields[i]
                 elif val[0]=='{':

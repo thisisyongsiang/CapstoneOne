@@ -12,15 +12,26 @@ class MergeSort:
         self.field=field
         self.index=0
         self.isAscending=isAscending
-        self.sort(0,len(self.list)-1,lambda a,b:a[field]<=b[field])
+        self.nullField=set()
+        self.sort(0,len(self.list)-1,self.comparer)
+    def comparer(self,a,b):
+        if not self.field in a:
+            if not a['fsq_id'] in self.nullField:
+                self.nullField.add(a['fsq_id'])
+            return False
+        if not self.field in b:
+            if not b['fsq_id'] in self.nullField:
+                self.nullField.add(b['fsq_id'])
+            return True
+        return float(a[self.field])<=float(b[self.field])
 
     def ChangeField(self,field):
         """
         Sorts the data again based on the new field
         """
         self.field=field
-        if self.isAscending:
-            self.sort(0,len(self.list)-1,lambda a,b:a[field]<=b[field])
+        self.nullField=set()
+        self.sort(0,len(self.list)-1,self.comparer)
         self.index=0
     def ChangeOrder(self,isAscending:bool):
         '''
@@ -39,7 +50,7 @@ class MergeSort:
         if self.isAscending:
             return self.list[index:self.index]
         else:
-            output=self.list[len(self.list)-index-n:len(self.list)-index]
+            output=self.list[len(self.list)-len(self.nullField)-index-n:len(self.list)-len(self.nullField)-index]
             output.reverse()
             return output
     def GetPrevN(self,n):
@@ -53,7 +64,7 @@ class MergeSort:
         if self.isAscending:
             return self.list[self.index:index]
         else:
-            output=self.list[len(self.list)-self.index-n:len(self.list)-self.index]
+            output=self.list[len(self.list)-len(self.nullField)-self.index-n:len(self.list)-len(self.nullField)-self.index]
             output.reverse()
             return output
 
@@ -141,5 +152,8 @@ def example():
     firstN=mergSort.GetPrevN(5)
     [print(c['name'],c['price']) for c in firstN]
     print('done')
-
+    mergSort.ChangeOrder(True)
+    firstN=mergSort.GetNextN(5)
+    [print(c['name'],c['price']) for c in firstN]
+    
 example()
