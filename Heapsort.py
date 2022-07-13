@@ -1,4 +1,6 @@
+from locale import currency
 import sys
+import json
 
 class Heap:
 
@@ -84,37 +86,98 @@ class getItemsByField:
         self.field = field
         self.isAscending = isAscending
         self.newHeap = Heap(arr)
-        self.removeCount = 0
+        self.removedCount = 0
+        self.removedItems = []
+        self.currIndex = 0
+        self.lastExtractedN = 0
 
-    def getTopN(self, topN):
+    def getNextN(self, nextN):
         """
         Returns top N items in a list of dictionaries
         """
 
-        topN = min(topN, len(self.arr)-self.removeCount)
-        sortedList = []
-        
-        if self.isAscending == True:
-            self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance']))
-            for j in range(topN):
-                sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
-        else:
-            self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance']))
-            for j in range(topN):
-                sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
+        if self.currIndex + nextN > len(self.arr):
+            nextN = len(self.arr)-self.currIndex
 
-        self.removeCount += topN
+        sortedList = []
+
+        if self.removedCount == 0:
+            if self.isAscending == True:
+                self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance']))
+            else:
+                self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance']))
+        
+        if nextN + self.currIndex <= self.removedCount:
+            self.currIndex += nextN
+            return self.removedItems[self.currIndex-nextN : self.currIndex]
+        elif nextN + self.currIndex > self.removedCount and self.currIndex == self.removedCount and self.currIndex + nextN :
+            if self.isAscending == True:
+                for j in range(nextN):
+                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
+                    self.currIndex += 1
+                    self.removedCount += 1
+            else:
+                for j in range(nextN):
+                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
+                    self.currIndex += 1
+                    self.removedCount += 1
+        elif nextN + self.currIndex >= self.removedCount and self.currIndex < self.removedCount:
+            sortedList += self.removedItems[self.currIndex : self.removedCount]
+            self.currIndex = self.removedCount
+            if self.isAscending == True:
+                for j in range(nextN-(self.removedCount-self.currIndex)):
+                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
+                    self.currIndex += 1
+                    self.removedCount += 1
+            else:
+                for j in range(nextN-(self.removedCount-self.currIndex)):
+                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
+                    self.currIndex += 1
+                    self.removedCount += 1
+
+        self.lastExtractedN = nextN
+        self.removedItems += sortedList
 
         return sortedList
 
+    def getPrevN(self, prevN):
 
+            if self.currIndex - self.lastExtractedN <= 0:
+                return
+            elif self.currIndex - self.lastExtractedN - prevN <= 0:
+                self.lastExtractedN = self.currIndex - self.lastExtractedN
+                self.currIndex = self.currIndex - self.lastExtractedN
+                return self.removedItems[0 : self.currIndex]
+            else:
+                self.currIndex = self.currIndex-self.lastExtractedN
+                self.lastExtractedN = prevN
+                return self.removedItems[self.currIndex-prevN : self.currIndex]
+        
+    
+def example():
+    dir="yelpAPIData.json"
+    f=open(dir,encoding='utf-8')
+    data=json.load(f)
 
-#sample code for using class and retrieving multiple topN items 
-# temp = getItemsByField(yelp_data, 'distance', True)
+    temp = getItemsByField(data, 'distance', True)
 
-# for i in range(2):
-#     output = temp.getTopN(5)
+    for i in range(5):
+        output = temp.getNextN(5)
 
-#     # print(output)
-#     for j in range(len(output)):
-#         print(output[j]['name'], output[j]['distance'])git
+        print(i)
+        for j in range(len(output)):
+            print(output[j]['name'], output[j]['distance'])
+
+    output2 = temp.getPrevN(3)
+    for k in range(len(output2)):
+            print(output2[k]['name'], output2[k]['distance'])
+
+    output2 = temp.getPrevN(3)
+    for k in range(len(output2)):
+            print(output2[k]['name'], output2[k]['distance'])
+
+    output2 = temp.getNextN(3)
+    for k in range(len(output2)):
+            print(output2[k]['name'], output2[k]['distance'])
+
+example()

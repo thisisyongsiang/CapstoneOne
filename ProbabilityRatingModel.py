@@ -25,6 +25,9 @@ def weighted(rating, rating_pref, price, price_pref, distance, distance_pref):
     """
     Function takes in order of preference of user for price, distance and rating and returns the combined weighted score
     """
+    #to convert price and distance to a score out of 10, to match ratings
+    price_conversion_factor = 10/4
+    distance_conversion_factor = 10/5
 
     if distance < 250:
         distance_score = 5
@@ -42,5 +45,11 @@ def weighted(rating, rating_pref, price, price_pref, distance, distance_pref):
         3: 0.2
     }
 
-    return weight_dict[rating_pref]*rating + weight_dict[price_pref]*price + weight_dict[distance_pref]*distance_score
+    price_conversion_dict = {
+        1: 4,
+        2: 3,
+        3: 2,
+        4: 1
+    }
 
+    return weight_dict[rating_pref]*rating + weight_dict[price_pref]*price_conversion_dict[price]*price_conversion_factor + weight_dict[distance_pref]*distance_score*distance_conversion_factor
