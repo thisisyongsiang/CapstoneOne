@@ -9,7 +9,30 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import time
-def getCategories(data:List[str],origin:List[float]=None ):
+import QuickSelect as qs
+
+def getCategories(data:List[dict]):
+    """
+    Returns top 30 categories to display. based on number of restaurants in category
+    not inclusive of 'dining and drinking' and 'restaurant' categories
+    Uses quickSelect
+    """
+    excludes=set(['dining and drinking','restaurant'])
+    cat={}
+    for d in data:
+        if not 'category' in d:
+            continue
+        for c in d['category']:
+            if c in excludes:
+                continue
+            if not c in cat:
+                cat[c]=1
+            else:
+                cat[c]+=1
+    QS=qs.QuickSelect([{'category':c,'count':cat[c]} for c in cat],'count',False)
+    return [d['category'] for d in QS.GetNextN(30)]
+
+def getCategoriesDict(data:List[dict]):
     """
     Returns dictionary with key as food category in lowercase
     and value as a list of objects belonging to category
@@ -25,17 +48,19 @@ def getCategories(data:List[str],origin:List[float]=None ):
         if not 'fsq_category_labels' in d:
             continue
         dCats = d['fsq_category_labels']
+        catSet=set()
         for dCat in dCats:
             for c in dCat:
                 food=c.lower()
-                
-                if not food in cat:
-                    cat[food]=[d]
-                else:
-                    cat[food].append(d)
+                if food not in catSet:
+                    catSet.add(food)
+                    if not food in cat:
+                        cat[food]=[d]
+                    else:
+                        cat[food].append(d)
     return cat
 
-def simplifyData(data:List[Dict],location:List[float], rating_weight,  price_weight,  distance_weight):
+def simplifyData(data:List[dict],location:List[float], rating_weight,  price_weight,  distance_weight):
     """
     Makes the data leaner
     Adds an additional recommendation_value
@@ -105,7 +130,7 @@ def changeLocation(data:List[Dict],location:List[float]=None):
         obj['distance']=GetDistance.GetDistanceFromCoordinates(location,[obj['latitude'],obj['longitude']]) 
 def changeWeights(data:List[Dict], rating_weight,  price_weight,  distance_weight):
     for obj in data:
-        rating,price,distance=0,5,99999
+        rating,price,distance=None,None,None
         if 'ratingAdjusted' in obj:
             rating=obj['ratingAdjusted']
         if 'price' in obj:
@@ -178,9 +203,6 @@ def filterDataByFieldsAndValueRanges(data:List[Dict],fields:List[str],valueRange
     """
     output=[]
     for d in data:
-        if d['is_closed']:
-            continue
-
         toInclude=True
         for i,field in enumerate(fields):
             if not field in d:
@@ -237,18 +259,32 @@ def CheckCategories():
     dir="singaporeFnBAll.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
+    data=simplifyData(data,[1.356007600303024, 103.83149240724738],1,2,3)
+
     f.close()
     print(len(data))
-    cat=getCategories(data)
+    cat=getCategoriesDict(data)
+    
     df=pd.DataFrame([[c.strip(),len(cat[c])] for c in cat],index=cat.keys(),columns=['Name','Count'])
     df=df.sort_values(by=['Count'],ascending=False)
     # print(df)
     # df.plot.bar(x='Name',y='Count',rot=0)
     df=df.drop(['dining and drinking','restaurant'])
     df=df.head(30)
+    uniqueSet=set()
+    for c in df.index:
+        print(c)
+        for obj in cat[c]:
+            if obj['fsq_id'] not in uniqueSet:
+                uniqueSet.add(obj['fsq_id'])
+    print(len(uniqueSet))
     print(df.sum())
+    top30 =getCategories(data)
+    print(top30)
+    print(len(top30))
     fig, ax = plt.subplots()
     x=np.arange(len(df['Count']))
     ax.bar(x,df['Count'])
     plt.xticks(x,[name.replace(' ','\n') for name in df['Name']],wrap=True,fontsize=7)
-    plt.show()
+    # plt.show()
+#CheckCategories()
