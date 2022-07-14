@@ -15,6 +15,9 @@ class QuickSelect:
             self.isAscending=isAscending
             self.index=0
     def GetNextN(self,n):
+        """
+        Get next n values, and sorts the resultant value based on field
+        """
         arr=[]
         if self.index==len(self.data):
             return arr
@@ -28,6 +31,7 @@ class QuickSelect:
         else:
             arr=self.data[self.index:self.index+n]
             self.index+=n
+        arr.sort(key=lambda x:float(x[self.field]),reverse= not self.isAscending)
         return arr
     def GetPrevN(self,n):
         self.index-=n
@@ -35,7 +39,9 @@ class QuickSelect:
             return []
         index=self.index
         self.index-=n
-        return self.data[self.index:index]
+        arr=self.data[self.index:index]
+        arr.sort(key=lambda x:float(x[self.field]),reverse= not self.isAscending)
+        return arr
     def comparer(self,a,b):
         if not self.field in b: 
             # if not b['fsq_id'] in self.nullField:
@@ -104,20 +110,20 @@ def example():
     dir="singaporeFnBAll.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
-    qs=QuickSelect(data,'price',False)
+    qs=QuickSelect(data,'total_tips',False)
     # firstN=getFirstN(data,'review_count',10,False)
     firstN=qs.GetNextN(5)
     # [print(c['name'],c['price']) for c in firstN]
-    [print(c['name'],c['price']) for c in firstN]
+    [print(c['name'],c['total_tips']) for c in firstN]
     print('done')
     firstN=qs.GetNextN(5)
-    [print(c['name'],c['price']) for c in firstN]
+    [print(c['name'],c['total_tips']) for c in firstN]
     print('done')   
     firstN=qs.GetPrevN(5)
-    [print(c['name'],c['price']) for c in firstN]
+    [print(c['name'],c['total_tips']) for c in firstN]
     print('done')
     qs.ChangeField('total_tips')
     firstN=qs.GetNextN(5)
     [print(c['name'],c['total_tips']) for c in firstN]
     print('done')
-#example()
+example()
