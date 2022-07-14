@@ -66,7 +66,7 @@ def simplifyData(data:List[Dict],location:List[float], rating_weight,  price_wei
             continue
         obj['latitude']=float(d['latitude'])
         obj['longitude']=float(d['longitude'])
-        rating,price,distance=0,5,99999
+        rating,price=None,None
         if 'address' in d:
             obj['address'] = d['address']
         if 'address_extended' in d:
@@ -252,4 +252,3 @@ def CheckCategories():
     ax.bar(x,df['Count'])
     plt.xticks(x,[name.replace(' ','\n') for name in df['Name']],wrap=True,fontsize=7)
     plt.show()
-showExample()
