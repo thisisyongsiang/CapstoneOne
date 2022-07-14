@@ -156,4 +156,4 @@ def example():
     firstN=mergSort.GetNextN(5)
     [print(c['name'],c['price']) for c in firstN]
     
-example()
+# example()

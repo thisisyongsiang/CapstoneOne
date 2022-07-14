@@ -19,9 +19,9 @@ class QuickSelect:
         if self.index==len(self.data):
             return arr
         if self.isAscending:
-            self.quickSelect(self.index,len(self.data)-1,n+self.index,lambda a,b:a[self.field]<=b[self.field])
+            self.quickSelect(self.index,len(self.data)-1,n+self.index,self.comparer)
         else:
-            self.quickSelect(self.index,len(self.data)-1,n+self.index,lambda a,b:a[self.field]>b[self.field])
+            self.quickSelect(self.index,len(self.data)-1,n+self.index,self.comparer)
         if self.index+n>=len(self.data):
             arr=self.data[self.index:]
             self.index=len(self.data)-1
@@ -36,7 +36,22 @@ class QuickSelect:
         index=self.index
         self.index-=n
         return self.data[self.index:index]
-    
+    def comparer(self,a,b):
+        if not self.field in b: 
+            # if not b['fsq_id'] in self.nullField:
+            #     self.nullField.add(b['fsq_id'])
+            if self.isAscending: return False
+            else: return True
+        if not self.field in a:
+            # if not a['fsq_id'] in self.nullField:
+            #     self.nullField.add(a['fsq_id'])
+            if self.isAscending: return True
+            else: return False
+
+        if self.isAscending:
+            return float(a[self.field])<=float(b[self.field])
+        else:
+            return float(a[self.field])>float(b[self.field])
     def swapElements(self,arr,i,j):
         """
         swap item of index i and 
@@ -86,17 +101,23 @@ class QuickSelect:
 
 
 def example():
-    dir="yelpAPIData.json"
+    dir="singaporeFnBAll.json"
     f=open(dir,encoding='utf-8')
     data=json.load(f)
-    qs=QuickSelect(data,'review_count',False)
+    qs=QuickSelect(data,'price',False)
     # firstN=getFirstN(data,'review_count',10,False)
     firstN=qs.GetNextN(5)
-    [print(c['name'],c['review_count']) for c in firstN]
+    # [print(c['name'],c['price']) for c in firstN]
+    [print(c['name'],c['price']) for c in firstN]
     print('done')
     firstN=qs.GetNextN(5)
-    [print(c['name'],c['review_count']) for c in firstN]
+    [print(c['name'],c['price']) for c in firstN]
     print('done')   
     firstN=qs.GetPrevN(5)
-    [print(c['name'],c['review_count']) for c in firstN]
+    [print(c['name'],c['price']) for c in firstN]
     print('done')
+    qs.ChangeField('total_tips')
+    firstN=qs.GetNextN(5)
+    [print(c['name'],c['total_tips']) for c in firstN]
+    print('done')
+#example()
