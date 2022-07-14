@@ -49,7 +49,11 @@ def weighted(rating, rating_pref, price, price_pref, distance, distance_pref):
         1: 4,
         2: 3,
         3: 2,
-        4: 1
+        4: 1,
+        None: 2.5
     }
+
+    if not rating:
+        rating = 5
 
     return weight_dict[rating_pref]*rating + weight_dict[price_pref]*price_conversion_dict[price]*price_conversion_factor + weight_dict[distance_pref]*distance_score*distance_conversion_factor
