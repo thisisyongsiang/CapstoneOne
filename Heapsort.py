@@ -180,4 +180,3 @@ def example():
     for k in range(len(output2)):
             print(output2[k]['name'], output2[k]['distance'])
 
-example()
