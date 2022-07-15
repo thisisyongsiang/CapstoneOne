@@ -96,44 +96,37 @@ class getItemsByField:
         Returns top N items in a list of dictionaries
         """
 
+        def ascendingComparer(a,b):
+             return a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])
+
+        def descendingComparer(a,b):
+            return a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])
+
         if self.currIndex + nextN > len(self.arr):
             nextN = len(self.arr)-self.currIndex
 
         sortedList = []
 
+        #only heapify during first call to getNextN
         if self.removedCount == 0:
-            if self.isAscending == True:
-                self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance']))
-            else:
-                self.newHeap.heapify(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance']))
+            self.newHeap.heapify(ascendingComparer if self.isAscending == True else descendingComparer)
         
-        if nextN + self.currIndex <= self.removedCount:
+
+        if nextN + self.currIndex <= self.removedCount: #case when calling nextN after calling prevN when all items in question have already been removed from heap
             self.currIndex += nextN
             return self.removedItems[self.currIndex-nextN : self.currIndex]
-        elif nextN + self.currIndex > self.removedCount and self.currIndex == self.removedCount and self.currIndex + nextN :
-            if self.isAscending == True:
-                for j in range(nextN):
-                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
-                    self.currIndex += 1
-                    self.removedCount += 1
-            else:
-                for j in range(nextN):
-                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
-                    self.currIndex += 1
-                    self.removedCount += 1
-        elif nextN + self.currIndex >= self.removedCount and self.currIndex < self.removedCount:
+        elif nextN + self.currIndex > self.removedCount and self.currIndex == self.removedCount: #case for when calling nextN when all N items have not previously been removed from heap
+            for j in range(nextN):
+                sortedList.append(self.newHeap.remove(ascendingComparer if self.isAscending == True else descendingComparer))
+                self.currIndex += 1
+                self.removedCount += 1
+        elif nextN + self.currIndex >= self.removedCount and self.currIndex < self.removedCount: #case for when some of nextN items have been removed from heap previously and remaining of subset of N items need to be removed from heap
             sortedList += self.removedItems[self.currIndex : self.removedCount]
             self.currIndex = self.removedCount
-            if self.isAscending == True:
-                for j in range(nextN-(self.removedCount-self.currIndex)):
-                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])>b[self.field]+(1/b['distance'])))
-                    self.currIndex += 1
-                    self.removedCount += 1
-            else:
-                for j in range(nextN-(self.removedCount-self.currIndex)):
-                    sortedList.append(self.newHeap.remove(lambda a,b: a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])))
-                    self.currIndex += 1
-                    self.removedCount += 1
+            for j in range(nextN-(self.removedCount-self.currIndex)):
+                sortedList.append(self.newHeap.remove(ascendingComparer if self.isAscending == True else descendingComparer))
+                self.currIndex += 1
+                self.removedCount += 1
 
         self.lastExtractedN = nextN
         self.removedItems += sortedList
@@ -141,17 +134,21 @@ class getItemsByField:
         return sortedList
 
     def getPrevN(self, prevN):
+        """
+        Function returns previous N elements that have been extracted from the heap in sorted order.
+        Function is designed to work with non-consistent values of N.
+        """
 
-            if self.currIndex - self.lastExtractedN <= 0: #return nothing if trying to get prevN before extracting 2 times
-                return
-            elif self.currIndex - self.lastExtractedN - prevN <= 0: 
-                self.currIndex = self.currIndex - self.lastExtractedN
-                self.lastExtractedN = self.currIndex - self.lastExtractedN
-                return self.removedItems[0 : self.currIndex]
-            else:
-                self.currIndex = self.currIndex-self.lastExtractedN
-                self.lastExtractedN = prevN
-                return self.removedItems[self.currIndex-prevN : self.currIndex]
+        if self.currIndex - self.lastExtractedN <= 0: #return nothing if trying to get prevN before extracting 2 times
+            return
+        elif self.currIndex - self.lastExtractedN - prevN <= 0: #case for when extracting all remaining items from sorted array
+            self.currIndex = self.currIndex - self.lastExtractedN
+            self.lastExtractedN = self.currIndex - self.lastExtractedN
+            return self.removedItems[0 : self.currIndex]
+        else:
+            self.currIndex = self.currIndex-self.lastExtractedN #case for when extracting subset of remaining items from sorted array
+            self.lastExtractedN = prevN
+            return self.removedItems[self.currIndex-prevN : self.currIndex]
         
     
 def example():
