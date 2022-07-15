@@ -139,11 +139,11 @@ class getItemsByField:
         Function is designed to work with non-consistent values of N.
         """
 
-        if self.currIndex - self.lastExtractedN <= 0: #return nothing if trying to get prevN before extracting 2 times
-            return
+        if self.currIndex - self.lastExtractedN <= 0: #return None if trying to get prevN before extracting 2 times
+            return None
         elif self.currIndex - self.lastExtractedN - prevN <= 0: #case for when extracting all remaining items from sorted array
             self.currIndex = self.currIndex - self.lastExtractedN
-            self.lastExtractedN = self.currIndex - self.lastExtractedN
+            self.lastExtractedN = self.currIndex
             return self.removedItems[0 : self.currIndex]
         else:
             self.currIndex = self.currIndex-self.lastExtractedN #case for when extracting subset of remaining items from sorted array
@@ -176,4 +176,3 @@ def example():
     output2 = temp.getNextN(3)
     for k in range(len(output2)):
             print(output2[k]['name'], output2[k]['distance'])
-
