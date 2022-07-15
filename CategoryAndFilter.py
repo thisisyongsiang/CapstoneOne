@@ -292,4 +292,4 @@ def CheckCategories():
     ax.bar(x,df['Count'])
     plt.xticks(x,[name.replace(' ','\n') for name in df['Name']],wrap=True,fontsize=7)
     # plt.show()
-CheckCategories()
+#CheckCategories()
