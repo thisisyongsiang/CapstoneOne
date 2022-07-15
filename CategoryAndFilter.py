@@ -23,15 +23,18 @@ def getCategories(data:List[dict]):
     for d in data:
         if not 'fsq_category_labels' in d:
             continue
+        catSet=set()
         for cats in d['fsq_category_labels']:
             for c in cats:
                 c = c.lower()
                 if c in excludes:
                     continue
-                if not c in cat:
-                    cat[c]=1
-                else:
-                    cat[c]+=1
+                if c not in catSet:
+                    catSet.add(c)
+                    if not c in cat:
+                        cat[c]=1
+                    else:
+                        cat[c]+=1
     QS=qs.QuickSelect([{'category':c,'count':cat[c]} for c in cat],'count',False)
     return [d['category'] for d in QS.GetNextN(30)]
 
@@ -289,4 +292,4 @@ def CheckCategories():
     ax.bar(x,df['Count'])
     plt.xticks(x,[name.replace(' ','\n') for name in df['Name']],wrap=True,fontsize=7)
     # plt.show()
-#CheckCategories()
+CheckCategories()
