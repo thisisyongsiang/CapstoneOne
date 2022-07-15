@@ -27,16 +27,16 @@ print(len(clean_data))
 # st.session_state.full_sorted_data = Heapsort.getItemsByField(sesh_state_clean_data, "recommendation", False)
 
 
-top_n = full_sorted_data.getNextN(7)
+top_n = full_sorted_data.getNextN(2)
 
 print("top 7")
 print([top_n[i]['name'] for i in range(len(top_n))])
 
-top_n2 = full_sorted_data.getNextN(7)
+top_n2 = full_sorted_data.getNextN(2)
 print("next 7")
 print([top_n2[i]['name'] for i in range(len(top_n2))])
 
-prev_n = full_sorted_data.getPrevN(7)
+prev_n = full_sorted_data.getPrevN(2)
 print("prev5")
 print([prev_n[i]['name'] for i in range(len(prev_n))])
 
