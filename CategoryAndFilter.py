@@ -119,7 +119,6 @@ def simplifyData(data:List[dict],location:List[float], rating_weight,  price_wei
             if (obj['latitude'] and obj['longitude']):
                 distance=GetDistance.GetDistanceFromCoordinates(location,[obj['latitude'],obj['longitude']])
                 obj['distance']= distance
-
             else:
                 obj['distance']=-1
         else:
@@ -165,8 +164,6 @@ def filterDataByFieldAndValueRange(data:List[Dict],field:str,valueRange):
     field=field.lower()
     output=[]
     for d in data:
-        if d['is_closed']:
-            continue
         if not field in d:
             continue
         if d[field]>=valueRange[0] and d[field]<=valueRange[1]:
