@@ -17,18 +17,21 @@ def getCategories(data:List[dict]):
     not inclusive of 'dining and drinking' and 'restaurant' categories
     Uses quickSelect
     """
+
     excludes=set(['dining and drinking','restaurant'])
     cat={}
     for d in data:
-        if not 'category' in d:
+        if not 'fsq_category_labels' in d:
             continue
-        for c in d['category']:
-            if c in excludes:
-                continue
-            if not c in cat:
-                cat[c]=1
-            else:
-                cat[c]+=1
+        for cats in d['fsq_category_labels']:
+            for c in cats:
+                c = c.lower()
+                if c in excludes:
+                    continue
+                if not c in cat:
+                    cat[c]=1
+                else:
+                    cat[c]+=1
     QS=qs.QuickSelect([{'category':c,'count':cat[c]} for c in cat],'count',False)
     return [d['category'] for d in QS.GetNextN(30)]
 
