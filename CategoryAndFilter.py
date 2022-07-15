@@ -97,15 +97,17 @@ def simplifyData(data:List[dict],location:List[float], rating_weight,  price_wei
         rating,price=None,None
         if 'address' in d:
             obj['address'] = d['address']
-        if 'address_extended' in d:
-            obj['address_extended'] = d['address_extended']
+            if 'address_extended' in d:
+                obj['address'] = obj['address'] + ', ' + d['address_extended']
+        else:
+            obj['address'] = 'NA'
         if 'price' in d:
             price=d['price']
             obj['price'] = price
             obj['display_price']= d['price'] * "$"
         else:
-            obj["price"] = 0
-            obj['display_price']= "NA"
+            obj['price'] = 0
+            obj['display_price']= 'NA'
         if 'rating' in d:
             obj['rating']=float(d['rating'])
         if "total_tips" in d:
