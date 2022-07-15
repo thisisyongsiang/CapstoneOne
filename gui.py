@@ -16,19 +16,13 @@ st.subheader("")
 st.subheader("Top Recommended Restaurants")
 
 # Get Results from Yelp API
-dir="yelpAPIDataMerged.json"
+dir="singaporeFnBAll.json"
 f=open(dir,encoding='utf-8')
 data=json.load(f)
 
-# Get Base Data to display first
-clean_data = ct.simplifyData(data)
-
-
 # Get Food Categories
-unwanted = ["art galleries", "arts & entertainment", "bikes", "butcher", "candy stores", "car wash", "caterers", "convenience stores", "department stores", "discount store", "do-it-yourself food", "electronics", "food", "food delivery services", "gas stations", "henghwa", "home services", "imported food", "international grocery", "internet cafes", "meat shops", "nutritionists", "restaurants", "seafood markets", "shopping", "venue & event spaces", "wholesale stores"]
-categories = ct.getCategories(clean_data)
-categories_clean = [i for i in categories if i not in unwanted]
-categories_clean.sort()
+categories = ct.getCategories(data)
+categories.sort()
 
 
 # User Input Form
@@ -36,7 +30,7 @@ st.sidebar.header("User Inputs")
 
 with st.sidebar.form("my-form"):
     selected_location = st.text_input("Lat/Long", "", key="selected_location")
-    selected_food_category = st.selectbox("Food Category", categories_clean, key="selected_category")
+    selected_food_category = st.selectbox("Food Category", categories, key="selected_category")
     weightage = st.multiselect("Select preferences in order of priority: ", ["Distance", "Price", "Rating"], key="selected_weightage")
     range_distance = st.slider(
         'Distance Range',
@@ -55,7 +49,7 @@ with st.sidebar.form("my-form"):
 if submitted:
     values = selected_location.split(',')
     latlong = [float(values[0]), float(values[1])]
-    clean_data = ct.simplifyData(data, latlong)
+    clean_data = ct.simplifyData(data, latlong,1,2,3)
     center = latlong
 
     clean_data = ct.getMultipleFoodCategories(clean_data, [selected_food_category])

@@ -181,8 +181,8 @@ def getMultipleFoodCategories(data:List[Dict],categories:List[str]):
     output=[]
     for d in data:
         chosen=False
-        for c in d['categories']:
-            if c['title'].lower() in cats:
+        for c in d['category']:
+            if c.lower() in cats:
                 chosen=True
         if chosen:
             output.append(d)
