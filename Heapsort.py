@@ -142,11 +142,11 @@ class getItemsByField:
 
     def getPrevN(self, prevN):
 
-            if self.currIndex - self.lastExtractedN <= 0:
+            if self.currIndex - self.lastExtractedN <= 0: #return nothing if trying to get prevN before extracting 2 times
                 return
-            elif self.currIndex - self.lastExtractedN - prevN <= 0:
-                self.lastExtractedN = self.currIndex - self.lastExtractedN
+            elif self.currIndex - self.lastExtractedN - prevN <= 0: 
                 self.currIndex = self.currIndex - self.lastExtractedN
+                self.lastExtractedN = self.currIndex - self.lastExtractedN
                 return self.removedItems[0 : self.currIndex]
             else:
                 self.currIndex = self.currIndex-self.lastExtractedN
