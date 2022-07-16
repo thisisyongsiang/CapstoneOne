@@ -129,7 +129,7 @@ def simplifyData(data:List[dict],location:List[float], rating_weight,  price_wei
         else:
             obj['distance']=-1
         obj['recommendation']=prm.weighted(rating,rating_weight,price,price_weight,distance,distance_weight)
-        output.append(obj)
+        output.append(obj)    
     return output
 
 def changeLocation(data:List[Dict],location:List[float]=None):
