@@ -37,8 +37,10 @@ if 'sort_by' not in st.session_state:
 
 def showResults(topN):
     # Display Results Table and Map
-    df = pd.DataFrame(topN)
-    if not df.empty:
+    if topN is None or len(topN) == 0:
+        results_container.write("!!! No more results to show. !!!")
+    else:
+        df = pd.DataFrame(topN)
         with results_container:
             df = df[["name", "distance", "recommendation", "display_price", "category"]]
             df["distance"] = df["distance"].astype(int)
@@ -64,10 +66,8 @@ def showResults(topN):
             map = open("map.html")
             components.html(html=map.read(), width=750, height=500, scrolling=True)
 
-            #st.write(len(st.session_state.sorted_data.arr))  # TODO REMOVE
-            #st.write(len(st.session_state.clean_data))  # TODO REMOVE
-    else:
-        results_container.write("!!! No restaurants matched your criteria. Please adjust your filters or you have reached the end of the list. !!!")
+            st.write(len(st.session_state.sorted_data.arr))  # TODO REMOVE
+            st.write(len(st.session_state.clean_data))  # TODO REMOVE
 
 sort_by = st.radio("Sort results by: ", ("Recommendation", "Distance", "Price"), key="selected_filter_visited")
 st.session_state.sort_by = sort_by
@@ -161,33 +161,39 @@ if submitted:
 
     st.session_state.clean_data = clean_data
 
-    # Output Results
-    st.session_state.sorted_data = Heapsort.getItemsByField(st.session_state.clean_data, "recommendation", False)
+    st.write(len(st.session_state.clean_data))
 
-    top_n = st.session_state.sorted_data.getNextN(5)
-    showResults(top_n)
+    if len(st.session_state.clean_data) == 0:
+        st.write("<<< No restaurants matched your criteria. Please adjust your filters. <<<")
+    else:
 
-    st.subheader("")
+        # Output Results
+        st.session_state.sorted_data = Heapsort.getItemsByField(st.session_state.clean_data, "recommendation", False)
+
+        top_n = st.session_state.sorted_data.getNextN(5)
+        showResults(top_n)
+
+        st.subheader("")
 
 
-    # Other Features
-    st.sidebar.subheader("")
-    st.sidebar.header("Other Features")
+        # Other Features
+        st.sidebar.subheader("")
+        st.sidebar.header("Other Features")
 
-    selected_visited = st.sidebar.selectbox("Select restaurant to add to list of visited places", places)
-    result = st.sidebar.button("Add Restaurant")
+        selected_visited = st.sidebar.selectbox("Select restaurant to add to list of visited places", places)
+        result = st.sidebar.button("Add Restaurant")
 
-    if result:
-        visited_places = []
-        with open("visited.csv", "r") as f:
-            reader = csv.reader(f)
-            for row in reader:
-                visited_places.append(row[0])
+        if result:
+            visited_places = []
+            with open("visited.csv", "r") as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    visited_places.append(row[0])
 
-        if selected_visited not in visited_places:
-            visited_places.append(selected_visited)
-            with open("visited.csv", mode="w") as g:
-                g.write("\n".join(visited_places))
+            if selected_visited not in visited_places:
+                visited_places.append(selected_visited)
+                with open("visited.csv", mode="w") as g:
+                    g.write("\n".join(visited_places))
 
 else:
     if st.session_state.current_sort != st.session_state.sort_by:
