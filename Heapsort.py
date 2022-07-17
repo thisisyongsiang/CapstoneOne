@@ -86,10 +86,7 @@ class getItemsByField:
         self.field = field
         self.isAscending = isAscending
         self.newHeap = Heap(arr)
-        self.removedCount = 0
         self.removedItems = []
-        self.currIndex = 0
-        self.lastExtractedN = 0
         self.getNextCounter = 0
         self.getPrevCounter = 0
         self.pageNo = 0
@@ -105,6 +102,9 @@ class getItemsByField:
 
         def descendingComparer(a,b):
             return a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])
+
+        if len(self.removedItems) == 0:
+            self.newHeap.heapify(ascendingComparer if self.isAscending == True else descendingComparer)
         
         self.pageNo = self.getNextCounter - self.getPrevCounter
         sortedList = []
