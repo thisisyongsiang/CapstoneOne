@@ -111,8 +111,9 @@ class getItemsByField:
 
         if self.pageNo+1 > self.maxPages:
             self.getNextCounter = self.getPrevCounter + self.maxPages + 1 #set page to max+1
+            self.pageNo = self.getNextCounter - self.getPrevCounter
             return []
-        elif (self.pageNo+1)*5 > len(self.removedItems): #extracting new items from Heap
+        elif (self.pageNo+1)*5 > len(self.removedItems) and (len(self.removedItems)//5 + (0 if len(self.removedItems)%5==0 else 1)) < self.pageNo+1: #extracting new items from Heap
             self.getNextCounter += 1
             self.pageNo = self.getNextCounter - self.getPrevCounter
             nextN = min(nextN,len(self.arr)-len(self.removedItems))
@@ -137,11 +138,11 @@ class getItemsByField:
 
         if self.pageNo <= 1:
             self.getPrevCounter = self.getNextCounter #set page number to 0
+            self.pageNo = self.getNextCounter - self.getPrevCounter
             return []
         else: 
             self.getPrevCounter += 1
             self.pageNo = self.getNextCounter - self.getPrevCounter
-            print(self.pageNo)
             return self.removedItems[(self.pageNo-1)*prevN : min(self.pageNo*prevN,len(self.removedItems))]
 
         
