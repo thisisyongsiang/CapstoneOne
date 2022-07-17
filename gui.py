@@ -1,3 +1,5 @@
+from base64 import encode
+import encodings
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
@@ -31,6 +33,12 @@ if 'get_prev' not in st.session_state:
 if 'load_ctr' not in st.session_state:
     st.session_state.load_ctr = 0
 
+if 'visit_places' not in st.session_state:
+    st.session_state.visit_places = []
+
+if 'add_restaurant' not in st.session_state:
+    st.session_state.add_restaurant = False
+
 if 'current_sort' not in st.session_state:
     st.session_state.current_sort = "Recommendation"
 if 'sort_by' not in st.session_state:
@@ -56,7 +64,7 @@ def showResults(topN):
             st.markdown(hide_table_row_index, unsafe_allow_html=True)
             st.table(df)
         
-            map_sg = folium.Map(location=st.session_state.center, zoom_start=13)
+            map_sg = folium.Map(location=st.session_state.center, zoom_start=13, encode='utf8')
             folium.Marker(st.session_state.center, popup = "You are here!", icon=folium.Icon(color="red")).add_to(map_sg)
 
             for row in topN:
@@ -66,6 +74,8 @@ def showResults(topN):
             map_sg.save("map.html")
             map = open("map.html")
             components.html(html=map.read(), width=750, height=500, scrolling=True)
+
+            st.write("Total Results: {}".format(len(st.session_state.sorted_data.arr)))
 
 
 sort_by = st.radio("Sort results by: ", ("Recommendation", "Distance", "Price"), key="selected_filter_visited")
@@ -121,7 +131,7 @@ with st.sidebar.form("my-form"):
 
 
 # Generate Recommendations after User Submits Inputs
-if submitted:
+if submitted or st.session_state.add_restaurant:
     # User Input Checks
     match = re.search("^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$", selected_location)
     if match is None:
@@ -139,6 +149,8 @@ if submitted:
         del st.session_state.clean_data
     if 'center' in st.session_state:
         del st.session_state.center
+    if 'visit_places' in st.session_state:
+        del st.session_state.visit_places
     st.session_state.get_prev = False
     st.session_state.get_next = False
 
@@ -164,9 +176,6 @@ if submitted:
 
         clean_data = ct.filterVisited(clean_data, visited)
 
-    places = [row['name'] for row in clean_data]
-    places.sort()
-
     st.session_state.clean_data = clean_data.copy()
 
     if len(st.session_state.clean_data) == 0:
@@ -175,32 +184,16 @@ if submitted:
 
         # Output Results
         data_copy = st.session_state.clean_data.copy()
+
+        places = [row['name'] for row in data_copy]
+        places.sort()
+        st.session_state.visit_places = set(places)
         st.session_state.sorted_data = Heapsort.getItemsByField(data_copy, "recommendation", False)
 
         top_n = st.session_state.sorted_data.getNextN(5)
         showResults(top_n)
 
         st.subheader("")
-
-
-        # Other Features
-        st.sidebar.subheader("")
-        st.sidebar.header("Other Features")
-
-        selected_visited = st.sidebar.selectbox("Select restaurant to add to list of visited places", places)
-        result = st.sidebar.button("Add Restaurant")
-
-        if result:
-            visited_places = []
-            with open("visited.csv", "r") as f:
-                reader = csv.reader(f)
-                for row in reader:
-                    visited_places.append(row[0])
-
-            if selected_visited not in visited_places:
-                visited_places.append(selected_visited)
-                with open("visited.csv", mode="w") as g:
-                    g.write("\n".join(visited_places))
 
 else:
     if st.session_state.current_sort != st.session_state.sort_by:
@@ -219,12 +212,32 @@ else:
             st.session_state.sorted_data = Heapsort.getItemsByField(data_copy, sort, True)
         showResults(st.session_state.sorted_data.getNextN(5))
 
-        st.write(len(st.session_state.sorted_data.arr))     # TODO REMOVE
-        st.write(len(st.session_state.clean_data))          # TODO REMOVE
-
     elif st.session_state.get_next and not st.session_state.get_prev:
         showResults(st.session_state.sorted_data.getNextN(5))
     elif st.session_state.get_prev and not st.session_state.get_next:
         showResults(st.session_state.sorted_data.getPrevN(5))
     else:
         st.write("<<< Select your preferencs and click 'Show Results!' to get your top recommended restaurants! <<<")
+
+
+# Other Features
+st.sidebar.subheader("")
+st.sidebar.header("Other Features")
+with st.sidebar.form("my-form-other"):
+    selected_visited = st.selectbox("Select restaurant to add to list of visited places", st.session_state.visit_places)
+    result = st.form_submit_button("Add Restaurant")
+
+    if result:
+        st.session_state.add_restaurant = True
+        visited_places = []
+        with open("visited.csv", "r") as f:
+            reader = csv.reader(f)
+            for row in reader:
+                visited_places.append(row[0])
+
+        if selected_visited is not None and selected_visited not in visited_places:
+            visited_places.append(selected_visited)
+
+        if len(visited_places) > 0:
+            with open("visited.csv", mode="w") as g:
+                g.write("\n".join(visited_places))
