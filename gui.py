@@ -67,8 +67,6 @@ def showResults(topN):
             map = open("map.html")
             components.html(html=map.read(), width=750, height=500, scrolling=True)
 
-            st.write(len(st.session_state.sorted_data.arr))  # TODO REMOVE
-            st.write(len(st.session_state.clean_data))  # TODO REMOVE
 
 sort_by = st.radio("Sort results by: ", ("Recommendation", "Distance", "Price"), key="selected_filter_visited")
 st.session_state.sort_by = sort_by
@@ -86,7 +84,6 @@ with col2:
         st.session_state.get_prev = False
         st.session_state.get_next = True
 
-# st.session_state  # TODO REMOVE
 
 if st.session_state.load_ctr == 0:
     # Get Results from Yelp API
@@ -170,16 +167,15 @@ if submitted:
     places = [row['name'] for row in clean_data]
     places.sort()
 
-    st.session_state.clean_data = clean_data
-
-    st.write(len(st.session_state.clean_data))
+    st.session_state.clean_data = clean_data.copy()
 
     if len(st.session_state.clean_data) == 0:
         st.write("<<< No restaurants matched your criteria. Please adjust your filters. <<<")
     else:
 
         # Output Results
-        st.session_state.sorted_data = Heapsort.getItemsByField(st.session_state.clean_data, "recommendation", False)
+        data_copy = st.session_state.clean_data.copy()
+        st.session_state.sorted_data = Heapsort.getItemsByField(data_copy, "recommendation", False)
 
         top_n = st.session_state.sorted_data.getNextN(5)
         showResults(top_n)
@@ -210,14 +206,21 @@ else:
     if st.session_state.current_sort != st.session_state.sort_by:
         st.session_state.current_sort = st.session_state.sort_by
         sort = st.session_state.sort_by.lower()
+
+        if 'sorted_data' in st.session_state:
+            st.write("Deleted sorted data")
+            del st.session_state.sorted_data
+
+        data_copy = st.session_state.clean_data.copy()
+
         if sort == "recommendation":
-            st.session_state.sorted_data = Heapsort.getItemsByField(st.session_state.clean_data, st.session_state.sort_by.lower(), False)
+            st.session_state.sorted_data = Heapsort.getItemsByField(data_copy, sort, False)
         else:
-            st.session_state.sorted_data = Heapsort.getItemsByField(st.session_state.clean_data, st.session_state.sort_by.lower(), True)
+            st.session_state.sorted_data = Heapsort.getItemsByField(data_copy, sort, True)
         showResults(st.session_state.sorted_data.getNextN(5))
 
         st.write(len(st.session_state.sorted_data.arr))     # TODO REMOVE
-        st.write(len(st.session_state.clean_data))
+        st.write(len(st.session_state.clean_data))          # TODO REMOVE
 
     elif st.session_state.get_next and not st.session_state.get_prev:
         showResults(st.session_state.sorted_data.getNextN(5))
