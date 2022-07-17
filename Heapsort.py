@@ -90,6 +90,10 @@ class getItemsByField:
         self.removedItems = []
         self.currIndex = 0
         self.lastExtractedN = 0
+        self.getNextCounter = 0
+        self.getPrevCounter = 0
+        self.pageNo = 0
+        self.maxPages = len(self.arr)//5 + (0 if len(self.arr)%5 == 0 else 1)
 
     def getNextN(self, nextN):
         """
@@ -101,35 +105,26 @@ class getItemsByField:
 
         def descendingComparer(a,b):
             return a[self.field]+(1/a['distance'])<b[self.field]+(1/b['distance'])
-
-        if self.currIndex + nextN > len(self.arr):
-            nextN = len(self.arr)-self.currIndex
-
+        
+        self.pageNo = self.getNextCounter - self.getPrevCounter
         sortedList = []
 
-        #only heapify during first call to getNextN
-        if self.removedCount == 0:
-            self.newHeap.heapify(ascendingComparer if self.isAscending == True else descendingComparer)
-        
-
-        if nextN + self.currIndex <= self.removedCount: #case when calling nextN after calling prevN when all items in question have already been removed from heap
-            self.currIndex += nextN
-            return self.removedItems[self.currIndex-nextN : self.currIndex]
-        elif nextN + self.currIndex > self.removedCount and self.currIndex == self.removedCount: #case for when calling nextN when all N items have not previously been removed from heap
+        if self.pageNo+1 > self.maxPages:
+            self.getNextCounter = self.getPrevCounter + self.maxPages + 1 #set page to max+1
+            return []
+        elif (self.pageNo+1)*5 > len(self.removedItems): #extracting new items from Heap
+            self.getNextCounter += 1
+            self.pageNo = self.getNextCounter - self.getPrevCounter
+            nextN = min(nextN,len(self.arr)-len(self.removedItems))
             for j in range(nextN):
                 sortedList.append(self.newHeap.remove(ascendingComparer if self.isAscending == True else descendingComparer))
-                self.currIndex += 1
-                self.removedCount += 1
-        elif nextN + self.currIndex >= self.removedCount and self.currIndex < self.removedCount: #case for when some of nextN items have been removed from heap previously and remaining of subset of N items need to be removed from heap
-            sortedList += self.removedItems[self.currIndex : self.removedCount]
-            self.currIndex = self.removedCount
-            for j in range(nextN-(self.removedCount-self.currIndex)):
-                sortedList.append(self.newHeap.remove(ascendingComparer if self.isAscending == True else descendingComparer))
-                self.currIndex += 1
-                self.removedCount += 1
+        else:
+            self.getNextCounter += 1
+            self.pageNo = self.getNextCounter - self.getPrevCounter
+            return(self.removedItems[(self.pageNo-1)*5 : min(self.pageNo*5,len(self.removedItems))])
 
-        self.lastExtractedN = nextN
         self.removedItems += sortedList
+
 
         return sortedList
 
@@ -138,17 +133,17 @@ class getItemsByField:
         Function returns previous N elements that have been extracted from the heap in sorted order.
         Function is designed to work with non-consistent values of N.
         """
+        self.pageNo = self.getNextCounter - self.getPrevCounter
 
-        if self.currIndex - self.lastExtractedN <= 0: #return None if trying to get prevN before extracting 2 times
-            return None
-        elif self.currIndex - self.lastExtractedN - prevN <= 0: #case for when extracting all remaining items from sorted array
-            self.currIndex = self.currIndex - self.lastExtractedN
-            self.lastExtractedN = self.currIndex
-            return self.removedItems[0 : self.currIndex]
-        else:
-            self.currIndex = self.currIndex-self.lastExtractedN #case for when extracting subset of remaining items from sorted array
-            self.lastExtractedN = prevN
-            return self.removedItems[self.currIndex-prevN : self.currIndex]
+        if self.pageNo <= 1:
+            self.getPrevCounter = self.getNextCounter #set page number to 0
+            return []
+        else: 
+            self.getPrevCounter += 1
+            self.pageNo = self.getNextCounter - self.getPrevCounter
+            print(self.pageNo)
+            return self.removedItems[(self.pageNo-1)*prevN : min(self.pageNo*prevN,len(self.removedItems))]
+
         
     
 def example():
@@ -165,14 +160,16 @@ def example():
         for j in range(len(output)):
             print(output[j]['name'], output[j]['distance'])
 
-    output2 = temp.getPrevN(3)
+    output2 = temp.getPrevN(5)
     for k in range(len(output2)):
             print(output2[k]['name'], output2[k]['distance'])
 
-    output2 = temp.getPrevN(3)
+    output2 = temp.getPrevN(5)
     for k in range(len(output2)):
             print(output2[k]['name'], output2[k]['distance'])
 
-    output2 = temp.getNextN(3)
+    output2 = temp.getNextN(5)
     for k in range(len(output2)):
             print(output2[k]['name'], output2[k]['distance'])
+
+
