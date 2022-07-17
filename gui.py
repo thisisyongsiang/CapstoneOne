@@ -54,6 +54,7 @@ def showResults(topN):
             df = df[["name", "distance", "recommendation", "display_price", "category"]]
             df["distance"] = df["distance"].astype(int)
             df["recommendation"] = df["recommendation"].round(2).astype(str)
+            df['category'] = [",".join(s) for s in df['category'].values]
             df.rename(columns = {"name":"NAME", "distance":"DISTANCE(m)", "recommendation": "RECOMMENDATION", "display_price":"PRICE", "category":"CATEGORIES"}, inplace=True)
             hide_table_row_index = """
                     <style>
