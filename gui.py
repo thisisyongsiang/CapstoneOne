@@ -117,8 +117,8 @@ with st.sidebar.form("my-form"):
     selected_food_category = st.selectbox("Food Category", st.session_state.sorted_categories, key="selected_category")
     weightage = st.multiselect("Select preferences in order of priority: ", ["Distance", "Price", "Rating"], key="selected_weightage")
     range_distance = st.slider(
-        'Distance Range',
-        0, 10000, (0, 10000), step=100, key="selected_range_distance")
+        'Distance Range (m)',
+        0, 50000, (0, 50000), step=500, key="selected_range_distance")
 
     range_price = st.slider(
         'Price Range',
@@ -181,6 +181,7 @@ if submitted or st.session_state.add_restaurant:
 
     if len(st.session_state.clean_data) == 0:
         st.write("<<< No restaurants matched your criteria. Please adjust your filters. <<<")
+        st.session_state.visit_places = []
     else:
 
         # Output Results
