@@ -47,6 +47,16 @@ def test_case_3(data):
     assert clean_data[0]['name'] == 'Michin Korean Bbq & Hotpot'    # Top shortest distance
     assert clean_data[4]['name'] == 'Mushroom Cafe'
 
+    clean_data = temp_data.getNextN(5)
+    assert len(clean_data) == 5
+    assert clean_data[0]['name'] == 'Mushroom Cafe' 
+    assert clean_data[4]['name'] == 'Essen, the Anchorvale'
+
+    clean_data = temp_data.getPrevN(5)
+    assert len(clean_data) == 5
+    assert clean_data[0]['name'] == 'Michin Korean Bbq & Hotpot' 
+    assert clean_data[4]['name'] == 'Mushroom Cafe'
+
     temp_data = Heapsort.getItemsByField(data, 'recommendation', False)
     assert len(temp_data.arr) == 54259
     clean_data = temp_data.getNextN(5)
@@ -61,6 +71,7 @@ def test_case_3(data):
     assert clean_data[0]['name'] == 'Le Steak by Chef Amri'     # Most expensive
     assert clean_data[4]['name'] == 'Go2Eat'
 
+
 # Mergesort
 def test_case_4(data):
     temp_data = MergeSort.MergeSort(data, 'distance', True)
@@ -68,6 +79,16 @@ def test_case_4(data):
     clean_data = temp_data.GetNextN(5)
     assert len(clean_data) == 5
     assert clean_data[0]['name'] == 'Michin Korean Bbq & Hotpot'    # Top shortest distance
+    assert clean_data[4]['name'] == 'Mushroom Cafe'
+
+    clean_data = temp_data.GetNextN(5)
+    assert len(clean_data) == 5
+    assert clean_data[0]['name'] == 'Mushroom Cafe'
+    assert clean_data[4]['name'] == 'Essen, the Anchorvale'
+
+    clean_data = temp_data.GetPrevN(5)
+    assert len(clean_data) == 5
+    assert clean_data[0]['name'] == 'Michin Korean Bbq & Hotpot'
     assert clean_data[4]['name'] == 'Mushroom Cafe'
 
     temp_data.ChangeField('recommendation')     # Check ChangeField and ChangeOrder
@@ -92,6 +113,16 @@ def test_case_5(data):
     clean_data = temp_data.GetNextN(5)
     assert len(clean_data) == 5
     assert clean_data[0]['name'] == 'Michin Korean Bbq & Hotpot'    # Top shortest distance
+    assert clean_data[4]['name'] == 'Mushroom Cafe'
+
+    clean_data = temp_data.GetNextN(5)
+    assert len(clean_data) == 5
+    assert clean_data[0]['name'] == 'Mushroom Cafe'
+    assert clean_data[4]['name'] == 'Essen, the Anchorvale'
+
+    clean_data = temp_data.GetPrevN(5)
+    assert len(clean_data) == 5
+    assert clean_data[0]['name'] == 'Michin Korean Bbq & Hotpot'
     assert clean_data[4]['name'] == 'Mushroom Cafe'
 
     temp_data.ChangeField('recommendation')     # Check ChangeField and ChangeOrder
