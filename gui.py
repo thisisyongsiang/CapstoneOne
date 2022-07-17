@@ -7,6 +7,7 @@ import MergeSort
 import CategoryAndFilter as ct
 import Heapsort
 import csv
+import re
 
 
 # Title
@@ -124,6 +125,16 @@ with st.sidebar.form("my-form"):
 
 # Generate Recommendations after User Submits Inputs
 if submitted:
+    # User Input Checks
+    match = re.search("^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$", selected_location)
+    if match is None:
+        st.write("<<< Please input your latitude/longtitude in the correct format <<<")
+        st.stop()
+
+    if len(weightage) < 3:
+        st.write("<<< Please select preferences in order of priority. (all 3 are needed) <<<")
+        st.stop()
+    
     # Reset States
     if 'sorted_data' in st.session_state:
         del st.session_state.sorted_data
