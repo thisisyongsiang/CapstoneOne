@@ -23,15 +23,18 @@ def getCategories(data:List[dict]):
     for d in data:
         if not 'fsq_category_labels' in d:
             continue
+        catSet=set()
         for cats in d['fsq_category_labels']:
             for c in cats:
                 c = c.lower()
                 if c in excludes:
                     continue
-                if not c in cat:
-                    cat[c]=1
-                else:
-                    cat[c]+=1
+                if c not in catSet:
+                    catSet.add(c)
+                    if not c in cat:
+                        cat[c]=1
+                    else:
+                        cat[c]+=1
     QS=qs.QuickSelect([{'category':c,'count':cat[c]} for c in cat],'count',False)
     return [d['category'] for d in QS.GetNextN(30)]
 
@@ -126,7 +129,7 @@ def simplifyData(data:List[dict],location:List[float], rating_weight,  price_wei
         else:
             obj['distance']=-1
         obj['recommendation']=prm.weighted(rating,rating_weight,price,price_weight,distance,distance_weight)
-        output.append(obj)
+        output.append(obj)    
     return output
 
 def changeLocation(data:List[Dict],location:List[float]=None):
